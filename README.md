@@ -1,4 +1,5 @@
-
+run `setup.ps1` to intall all the required things
+requires (go)[https://go.dev/] for the server
 
 ## used
 https://openupm.com/packages/ai.transforms.unity-grpc-web/  unity is twat why no http/2

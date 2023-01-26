@@ -18,7 +18,7 @@ if (-not(Test-Path -Path $GRPC_PATH)) {
 
 $protoc = $GRPC_PATH+"/protoc.exe"
 
-if (False){#Get-Command "go" -errorAction SilentlyContinue){
+if (Get-Command "go" -errorAction SilentlyContinue){
     if (-not(Get-Command "protoc-gen-go" -errorAction SilentlyContinue)){
         go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     }
@@ -26,7 +26,9 @@ if (False){#Get-Command "go" -errorAction SilentlyContinue){
         go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     }
     & $protoc -I grpc/ --go-grpc_out=Server/ --go_out=Server/ colour.proto
+    echo "built go protos"
 }
 
 $csharpPlugin = $GRPC_PATH+"/grpc_csharp_plugin.exe"
 & $protoc -I grpc/ --csharp_out=Client\Assets\Scripts\Generated --grpc_out=Client\Assets\Scripts\Generated --plugin=protoc-gen-grpc=$csharpPlugin colour.proto
+echo "built unity protos"
