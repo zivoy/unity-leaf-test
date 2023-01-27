@@ -25,7 +25,7 @@ if (Get-Command "go" -errorAction SilentlyContinue){
     if (-not(Get-Command "protoc-gen-go-grpc" -errorAction SilentlyContinue)){
         go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     }
-    & $protoc -I grpc/ --go-grpc_out=Server/ --go_out=Server/ colour.proto
+    & $protoc -I grpc/ --go-grpc_out=Server/msg/ --go_out=Server/msg/ colour.proto
     echo "built go protos"
 }
 
