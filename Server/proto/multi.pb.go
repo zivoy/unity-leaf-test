@@ -128,7 +128,6 @@ type Request struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Action:
-	//
 	//	*Request_Move
 	Action isRequest_Action `protobuf_oneof:"action"`
 }
@@ -195,7 +194,6 @@ type Response struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Action:
-	//
 	//	*Response_AddEntity
 	//	*Response_UpdateEntity
 	//	*Response_RemoveEntity
@@ -416,7 +414,6 @@ type Entity struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Entity:
-	//
 	//	*Entity_Player
 	Entity isEntity_Entity `protobuf_oneof:"entity"`
 }
