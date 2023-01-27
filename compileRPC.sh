@@ -1,6 +1,6 @@
 #!/bin/sh
 
-OperatingSystem="linux"
+OperatingSystem="macosx"
 Version="x64"
 OS="${OperatingSystem}_${Version}"
 GRPC_PATH="./Grpc-Tools"
@@ -13,6 +13,7 @@ then
     curl -o tmp.zip -L $GRPC_URL
     unzip tmp.zip > /dev/null
 
+    ls tools
     cd ..
     mv -v tmp/tools/$OS/* .
     chmod +x *

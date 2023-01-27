@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ColourRandomizer : MonoBehaviour
 {
-    public Material material;
+    public MeshRenderer player;
 
     private readonly Color _defaultColor = Color.red;
     private ColourClient _colourClient;
@@ -22,16 +22,14 @@ public class ColourRandomizer : MonoBehaviour
         {
             return newColour;
         }
-        else
-        {
-            Debug.Log("Error parsing the colour string: "+newColourString);
-            Debug.Log("Setting to default colour: "+_defaultColor);
-            return _defaultColor;
-        }
+
+        Debug.Log("Error parsing the colour string: " + newColourString);
+        Debug.Log("Setting to default colour: " + _defaultColor);
+        return _defaultColor;
     }
 
     public void ChangeColour()
     {
-        material.color = GetColour(material.color);
+        player.material.color = GetColour(player.material.color);
     }
 }

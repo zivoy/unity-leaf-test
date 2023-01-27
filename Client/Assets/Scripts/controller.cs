@@ -20,8 +20,8 @@ public class controller : MonoBehaviour
     void Update()
     {
         if (!Controlled) return;
-        Vector3 m_Input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
-        _rigidbody.MovePosition(transform.position + m_Input * (Time.deltaTime * m_Speed));
+        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+               
+        _rigidbody.MovePosition(transform.position + input * (Time.deltaTime * m_Speed));
     }
 }

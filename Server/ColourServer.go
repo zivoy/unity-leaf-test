@@ -29,7 +29,7 @@ func randomHex() string {
 
 func ToHex(colour color.Color) string {
 	r, g, b, _ := colour.RGBA()
-	return fmt.Sprintf("%02x%02x%02x", r, g, b)
+	return fmt.Sprintf("%02x%02x%02x", r & 0xff, g& 0xff, b& 0xff)
 }
 
 func randColour() color.Color {

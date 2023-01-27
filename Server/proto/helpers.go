@@ -21,7 +21,7 @@ func GetProtoEntity(entity backend.Identifier) *Entity {
 
 func GetProtoPlayer(player *backend.Player) *Player {
 	r, g, b, _ := player.Colour.RGBA()
-	col := fmt.Sprintf("#%02x%02x%02x", r, g, b)
+	col := fmt.Sprintf("#%02x%02x%02x", r& 0xff, g& 0xff, b& 0xff)
 	return &Player{
 		Id:       player.ID().String(),
 		Name:     player.Name,
