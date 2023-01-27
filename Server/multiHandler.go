@@ -5,16 +5,13 @@ import (
 	"errors"
 	"exampleMulti/backend"
 	pb "exampleMulti/proto"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/metadata"
 	"log"
 	"math/rand"
 	"regexp"
-	"strings"
 	"sync"
 	"time"
-	"unicode/utf8"
 )
 
 const (
@@ -34,18 +31,16 @@ type client struct {
 // GameServer is used to stream game information with clients.
 type GameServer struct {
 	pb.UnimplementedGameServer
-	game     *backend.Game
-	clients  map[uuid.UUID]*client
-	mu       sync.RWMutex
-	password string
+	game    *backend.Game
+	clients map[uuid.UUID]*client
+	mu      sync.RWMutex
 }
 
 // NewGameServer constructs a new game server struct.
-func NewGameServer(game *backend.Game, password string) *GameServer {
+func NewGameServer(game *backend.Game) *GameServer {
 	server := &GameServer{
-		game:     game,
-		clients:  make(map[uuid.UUID]*client),
-		password: password,
+		game:    game,
+		clients: make(map[uuid.UUID]*client),
 	}
 	server.watchChanges()
 	server.watchTimeout()
@@ -95,6 +90,12 @@ func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) 
 // Stream is the main loop for dealing with individual players.
 func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 	ctx := srv.Context()
+
+	//playerID, err := uuid.Parse(srv.Id)
+	//if err != nil {
+	//	return nil, err
+	//}
+
 	currentClient, err := s.getClientFromContext(ctx)
 	if err != nil {
 		return err
@@ -121,8 +122,6 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 			switch req.GetAction().(type) {
 			case *pb.Request_Move:
 				s.handleMoveRequest(req, currentClient)
-			case *pb.Request_Laser:
-				s.handleLaserRequest(req, currentClient)
 			}
 		}
 	}()
@@ -145,43 +144,28 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 
 func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.ConnectResponse, error) {
 	if len(s.clients) >= maxClients {
-		return nil, errors.New("The server is full")
+		return nil, errors.New("the server is full")
 	}
-
-	playerID, err := uuid.Parse(req.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	// Exit as early as possible if password is wrong.
-	if req.Password != s.password {
-		return nil, errors.New("invalid password provided")
-	}
-
-	// Check if player already exists.
-	s.game.Mu.RLock()
-	if s.game.GetEntity(playerID) != nil {
-		return nil, errors.New("duplicate player ID provided")
-	}
-	s.game.Mu.RUnlock()
 
 	re := regexp.MustCompile("^[a-zA-Z0-9]+$")
 	if !re.MatchString(req.Name) {
 		return nil, errors.New("invalid name provided")
 	}
-	icon, _ := utf8.DecodeRuneInString(strings.ToUpper(req.Name))
+
+	colour := randColour()
 
 	// Choose a random spawn point.
-	spawnPoints := s.game.GetMapByType()[backend.MapTypeSpawn]
 	rand.Seed(time.Now().Unix())
-	i := rand.Int() % len(spawnPoints)
-	startCoordinate := spawnPoints[i]
+	startCoordinate := backend.Coordinate{Y: 0, X: 0}
+
+	// make up an id for the user
+	id := uuid.New()
 
 	// Add the player.
 	player := &backend.Player{
 		Name:            req.Name,
-		Icon:            icon,
-		IdentifierBase:  backend.IdentifierBase{UUID: playerID},
+		Colour:          colour,
+		IdentifierBase:  backend.IdentifierBase{UUID: id},
 		CurrentPosition: startCoordinate,
 	}
 	s.game.Mu.Lock()
@@ -190,9 +174,9 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 
 	// Build a slice of current entities.
 	s.game.Mu.RLock()
-	entities := make([]*pb.Entity, 0)
+	entities := make([]*pb.Entity, 0, len(s.game.Entities))
 	for _, entity := range s.game.Entities {
-		pbEntity := pb.GetpbEntity(entity)
+		pbEntity := pb.GetProtoEntity(entity)
 		if pbEntity != nil {
 			entities = append(entities, pbEntity)
 		}
@@ -203,7 +187,7 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	resp := pb.Response{
 		Action: &pb.Response_AddEntity{
 			AddEntity: &pb.AddEntity{
-				Entity: pb.GetpbEntity(player),
+				Entity: pb.GetProtoEntity(player),
 			},
 		},
 	}
@@ -211,17 +195,15 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 
 	// Add the new client.
 	s.mu.Lock()
-	token := uuid.New()
-	s.clients[token] = &client{
-		id:          token,
-		playerID:    playerID,
+	s.clients[id] = &client{
+		id:          id,
 		done:        make(chan error),
 		lastMessage: time.Now(),
 	}
 	s.mu.Unlock()
 
 	return &pb.ConnectResponse{
-		Token:    token.String(),
+		Id:       id.String(),
 		Entities: entities,
 	}, nil
 }
@@ -256,15 +238,6 @@ func (s *GameServer) watchChanges() {
 			case backend.RemoveEntityChange:
 				change := change.(backend.RemoveEntityChange)
 				s.handleRemoveEntityChange(change)
-			case backend.PlayerRespawnChange:
-				change := change.(backend.PlayerRespawnChange)
-				s.handlePlayerRespawnChange(change)
-			case backend.RoundOverChange:
-				change := change.(backend.RoundOverChange)
-				s.handleRoundOverChange(change)
-			case backend.RoundStartChange:
-				change := change.(backend.RoundStartChange)
-				s.handleRoundStartChange(change)
 			}
 		}
 	}()
@@ -291,30 +264,9 @@ func (s *GameServer) broadcast(resp *pb.Response) {
 func (s *GameServer) handleMoveRequest(req *pb.Request, currentClient *client) {
 	move := req.GetMove()
 	s.game.ActionChannel <- backend.MoveAction{
-		ID:        currentClient.playerID,
-		Direction: pb.GetBackendDirection(move.Direction),
-		Created:   time.Now(),
-	}
-}
-
-func (s *GameServer) handleLaserRequest(req *pb.Request, currentClient *client) {
-	laser := req.GetLaser()
-	id, err := uuid.Parse(laser.Id)
-	if err != nil {
-		currentClient.done <- errors.New("invalid laser ID provided")
-		return
-	}
-	s.game.Mu.RLock()
-	if s.game.GetEntity(id) != nil {
-		currentClient.done <- errors.New("duplicate laser ID provided")
-		return
-	}
-	s.game.Mu.RUnlock()
-	s.game.ActionChannel <- backend.LaserAction{
-		OwnerID:   currentClient.playerID,
-		ID:        id,
-		Direction: pb.GetBackendDirection(laser.Direction),
-		Created:   time.Now(),
+		ID:       currentClient.playerID,
+		Position: pb.GetBackendCoordinate(move),
+		Created:  time.Now(),
 	}
 }
 
@@ -322,7 +274,7 @@ func (s *GameServer) handleMoveChange(change backend.MoveChange) {
 	resp := pb.Response{
 		Action: &pb.Response_UpdateEntity{
 			UpdateEntity: &pb.UpdateEntity{
-				Entity: pb.GetpbEntity(change.Entity),
+				Entity: pb.GetProtoEntity(change.Entity),
 			},
 		},
 	}
@@ -333,7 +285,7 @@ func (s *GameServer) handleAddEntityChange(change backend.AddEntityChange) {
 	resp := pb.Response{
 		Action: &pb.Response_AddEntity{
 			AddEntity: &pb.AddEntity{
-				Entity: pb.GetpbEntity(change.Entity),
+				Entity: pb.GetProtoEntity(change.Entity),
 			},
 		},
 	}
@@ -345,57 +297,6 @@ func (s *GameServer) handleRemoveEntityChange(change backend.RemoveEntityChange)
 		Action: &pb.Response_RemoveEntity{
 			RemoveEntity: &pb.RemoveEntity{
 				Id: change.Entity.ID().String(),
-			},
-		},
-	}
-	s.broadcast(&resp)
-}
-
-func (s *GameServer) handlePlayerRespawnChange(change backend.PlayerRespawnChange) {
-	resp := pb.Response{
-		Action: &pb.Response_PlayerRespawn{
-			PlayerRespawn: &pb.PlayerRespawn{
-				Player:     pb.GetpbPlayer(change.Player),
-				KilledById: change.KilledByID.String(),
-			},
-		},
-	}
-	s.broadcast(&resp)
-}
-
-func (s *GameServer) handleRoundOverChange(change backend.RoundOverChange) {
-	s.game.Mu.RLock()
-	defer s.game.Mu.RUnlock()
-	timestamp, err := ptypes.Timestamppb(s.game.NewRoundAt)
-	if err != nil {
-		log.Fatalf("unable to parse new round timestamp %v", s.game.NewRoundAt)
-	}
-	resp := pb.Response{
-		Action: &pb.Response_RoundOver{
-			RoundOver: &pb.RoundOver{
-				RoundWinnerId: s.game.RoundWinner.String(),
-				NewRoundAt:    timestamp,
-			},
-		},
-	}
-	s.broadcast(&resp)
-}
-
-func (s *GameServer) handleRoundStartChange(change backend.RoundStartChange) {
-	players := []*pb.Player{}
-	s.game.Mu.RLock()
-	for _, entity := range s.game.Entities {
-		player, ok := entity.(*backend.Player)
-		if !ok {
-			continue
-		}
-		players = append(players, pb.GetpbPlayer(player))
-	}
-	s.game.Mu.RUnlock()
-	resp := pb.Response{
-		Action: &pb.Response_RoundStart{
-			RoundStart: &pb.RoundStart{
-				Players: players,
 			},
 		},
 	}

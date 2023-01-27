@@ -54,14 +54,6 @@ public static partial class Game
   static readonly grpc::Marshaller<global::Response> __Marshaller_Response = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Response.Parser));
 
   [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-  static readonly grpc::Method<global::ConnectRequest, global::ConnectResponse> __Method_RequestRoom = new grpc::Method<global::ConnectRequest, global::ConnectResponse>(
-      grpc::MethodType.Unary,
-      __ServiceName,
-      "RequestRoom",
-      __Marshaller_ConnectRequest,
-      __Marshaller_ConnectResponse);
-
-  [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
   static readonly grpc::Method<global::ConnectRequest, global::ConnectResponse> __Method_Connect = new grpc::Method<global::ConnectRequest, global::ConnectResponse>(
       grpc::MethodType.Unary,
       __ServiceName,
@@ -87,12 +79,6 @@ public static partial class Game
   [grpc::BindServiceMethod(typeof(Game), "BindService")]
   public abstract partial class GameBase
   {
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    public virtual global::System.Threading.Tasks.Task<global::ConnectResponse> RequestRoom(global::ConnectRequest request, grpc::ServerCallContext context)
-    {
-      throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
-    }
-
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     public virtual global::System.Threading.Tasks.Task<global::ConnectResponse> Connect(global::ConnectRequest request, grpc::ServerCallContext context)
     {
@@ -134,26 +120,6 @@ public static partial class Game
     {
     }
 
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    public virtual global::ConnectResponse RequestRoom(global::ConnectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-    {
-      return RequestRoom(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-    }
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    public virtual global::ConnectResponse RequestRoom(global::ConnectRequest request, grpc::CallOptions options)
-    {
-      return CallInvoker.BlockingUnaryCall(__Method_RequestRoom, null, options, request);
-    }
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    public virtual grpc::AsyncUnaryCall<global::ConnectResponse> RequestRoomAsync(global::ConnectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-    {
-      return RequestRoomAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-    }
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    public virtual grpc::AsyncUnaryCall<global::ConnectResponse> RequestRoomAsync(global::ConnectRequest request, grpc::CallOptions options)
-    {
-      return CallInvoker.AsyncUnaryCall(__Method_RequestRoom, null, options, request);
-    }
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     public virtual global::ConnectResponse Connect(global::ConnectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
     {
@@ -198,7 +164,6 @@ public static partial class Game
   public static grpc::ServerServiceDefinition BindService(GameBase serviceImpl)
   {
     return grpc::ServerServiceDefinition.CreateBuilder()
-        .AddMethod(__Method_RequestRoom, serviceImpl.RequestRoom)
         .AddMethod(__Method_Connect, serviceImpl.Connect)
         .AddMethod(__Method_Stream, serviceImpl.Stream).Build();
   }
@@ -210,7 +175,6 @@ public static partial class Game
   [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
   public static void BindService(grpc::ServiceBinderBase serviceBinder, GameBase serviceImpl)
   {
-    serviceBinder.AddMethod(__Method_RequestRoom, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ConnectRequest, global::ConnectResponse>(serviceImpl.RequestRoom));
     serviceBinder.AddMethod(__Method_Connect, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::ConnectRequest, global::ConnectResponse>(serviceImpl.Connect));
     serviceBinder.AddMethod(__Method_Stream, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Request, global::Response>(serviceImpl.Stream));
   }

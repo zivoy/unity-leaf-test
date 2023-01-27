@@ -1,5 +1,7 @@
 run `setup.ps1` to intall all the required things
-requires (go)[https://go.dev/] for the server
+requires [go](https://go.dev/) for the server
+
+server code is mostly adapted from [this blogpost](https://mortenson.coffee/blog/making-multiplayer-game-go-and-grpc/)
 
 ## used
 https://openupm.com/packages/ai.transforms.unity-grpc-web/  unity is twat why no http/2

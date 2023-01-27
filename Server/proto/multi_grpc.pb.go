@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GameClient interface {
-	RequestRoom(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error)
 	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error)
 	Stream(ctx context.Context, opts ...grpc.CallOption) (Game_StreamClient, error)
 }
@@ -33,15 +32,6 @@ type gameClient struct {
 
 func NewGameClient(cc grpc.ClientConnInterface) GameClient {
 	return &gameClient{cc}
-}
-
-func (c *gameClient) RequestRoom(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error) {
-	out := new(ConnectResponse)
-	err := c.cc.Invoke(ctx, "/Game/RequestRoom", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *gameClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error) {
@@ -88,7 +78,6 @@ func (x *gameStreamClient) Recv() (*Response, error) {
 // All implementations must embed UnimplementedGameServer
 // for forward compatibility
 type GameServer interface {
-	RequestRoom(context.Context, *ConnectRequest) (*ConnectResponse, error)
 	Connect(context.Context, *ConnectRequest) (*ConnectResponse, error)
 	Stream(Game_StreamServer) error
 	mustEmbedUnimplementedGameServer()
@@ -98,9 +87,6 @@ type GameServer interface {
 type UnimplementedGameServer struct {
 }
 
-func (UnimplementedGameServer) RequestRoom(context.Context, *ConnectRequest) (*ConnectResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestRoom not implemented")
-}
 func (UnimplementedGameServer) Connect(context.Context, *ConnectRequest) (*ConnectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Connect not implemented")
 }
@@ -118,24 +104,6 @@ type UnsafeGameServer interface {
 
 func RegisterGameServer(s grpc.ServiceRegistrar, srv GameServer) {
 	s.RegisterService(&Game_ServiceDesc, srv)
-}
-
-func _Game_RequestRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConnectRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GameServer).RequestRoom(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Game/RequestRoom",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GameServer).RequestRoom(ctx, req.(*ConnectRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Game_Connect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -189,10 +157,6 @@ var Game_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "Game",
 	HandlerType: (*GameServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "RequestRoom",
-			Handler:    _Game_RequestRoom_Handler,
-		},
 		{
 			MethodName: "Connect",
 			Handler:    _Game_Connect_Handler,
