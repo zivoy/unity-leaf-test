@@ -5,9 +5,10 @@ import (
 	pb "exampleMulti/proto"
 	"flag"
 	"fmt"
-	"google.golang.org/grpc"
 	"log"
 	"net"
+
+	"google.golang.org/grpc"
 )
 
 var (
@@ -31,7 +32,6 @@ func main() {
 	server := NewGameServer(game)
 
 	s := grpc.NewServer()
-	pb.RegisterColourGeneratorServer(s, &RandomiseColour{})
 	pb.RegisterGameServer(s, server)
 
 	if err = s.Serve(lis); err != nil {

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"exampleMulti/backend"
 	pb "exampleMulti/proto"
+	"image/color"
 	"log"
 	"math/rand"
 	"regexp"
@@ -148,7 +149,11 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	}
 	log.Println("Incoming connection from", req.Name)
 
-	colour := randColour()
+	colour := color.RGBA{
+		R: uint8(rand.Intn(256)),
+		G: uint8(rand.Intn(256)),
+		B: uint8(rand.Intn(256)),
+	}
 
 	// Choose a random spawn point.
 	rand.Seed(time.Now().Unix())

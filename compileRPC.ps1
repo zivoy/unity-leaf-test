@@ -30,5 +30,5 @@ if (Get-Command "go" -errorAction SilentlyContinue){
 }
 
 $csharpPlugin = $GRPC_PATH+"/grpc_csharp_plugin.exe"
-& $protoc --csharp_out=Client/Assets/Scripts/Generated --grpc_out=Client/Assets/Scripts/Generated --plugin=protoc-gen-grpc=$csharpPlugin grpc/*.proto
+& $protoc --csharp_out=Client/Assets/Scripts/Online/Generated --grpc_out=Client/Assets/Scripts/Online/Generated --plugin=protoc-gen-grpc=$csharpPlugin grpc/*.proto
 echo "built unity protos"
