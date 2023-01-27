@@ -11,15 +11,15 @@ const (
 	colourByte = 3
 )
 
-type Server struct{}
+type RandomiseColour struct{}
 
-func (s Server) GetRandColour(ctx context.Context, curr *CurrentColour) (*NewColour, error) {
+func (s RandomiseColour) GetRandColour(ctx context.Context, curr *CurrentColour) (*NewColour, error) {
 	hex := "#" + randomHex()
 	log.Printf("Client's current colour: [#%s] sending [%s]", curr.Colour, hex)
 	return &NewColour{Colour: hex}, nil
 }
 
-func (s Server) mustEmbedUnimplementedColourGeneratorServer() {}
+func (s RandomiseColour) mustEmbedUnimplementedColourGeneratorServer() {}
 
 func randomHex() string {
 	bytes := make([]byte, colourByte)

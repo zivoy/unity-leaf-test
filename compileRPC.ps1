@@ -25,10 +25,10 @@ if (Get-Command "go" -errorAction SilentlyContinue){
     if (-not(Get-Command "protoc-gen-go-grpc" -errorAction SilentlyContinue)){
         go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
     }
-    & $protoc -I grpc/ --go-grpc_out=Server/ --go_out=Server/ colour.proto
+    & $protoc --go-grpc_out=Server/ --go_out=Server/ grpc/*.proto
     echo "built go protos"
 }
 
 $csharpPlugin = $GRPC_PATH+"/grpc_csharp_plugin.exe"
-& $protoc -I grpc/ --csharp_out=Client\Assets\Scripts\Generated --grpc_out=Client\Assets\Scripts\Generated --plugin=protoc-gen-grpc=$csharpPlugin colour.proto
+& $protoc --csharp_out=Client/Assets/Scripts/Generated --grpc_out=Client/Assets/Scripts/Generated --plugin=protoc-gen-grpc=$csharpPlugin grpc/*.proto
 echo "built unity protos"

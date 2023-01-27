@@ -1,0 +1,68 @@
+syntax = "proto3";
+// import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/";
+
+service Game {
+    rpc RequestRoom (ConnectRequest) returns (ConnectResponse) {}
+    rpc Connect (ConnectRequest) returns (ConnectResponse) {}
+    rpc Stream (stream Request) returns (stream Response) {}
+ }
+
+ message ConnectRequest {
+    string id = 1;
+    string name = 2;
+    optional string roomid = 3;
+ }
+  
+ message ConnectResponse {
+    string token = 1;
+    repeated Entity entities = 2;
+ }
+
+ message Request {
+    oneof action {
+        Position move = 1;
+        // Shot shoot = 2;
+    }
+ }
+  
+ message Response {
+    oneof action {
+        AddEntity addEntity = 1;
+        // UpdateEntity updateEntity = 2;
+        // RemoveEntity removeEntity = 3;
+        // RoundOver roundOver = 4;
+        // RoundStart roundStart = 5;
+    }
+ }
+
+ message Position {
+    float x = 1;
+    float y = 2;
+ }
+
+ message Player {
+    string id = 1;
+    string name = 2;
+    Position position = 3;
+    string avatar = 4;
+}
+
+ message Shot {
+    string id = 1;
+    float direction = 2;
+    // google.protobuf.Timestamp startTime = 3;
+    Position initialPosition = 4;
+    string ownerId = 5;
+ }
+
+ message Entity {
+    oneof entity {
+        Player player = 1;
+        Shot shot = 2;
+    }
+ }
+ message AddEntity {
+    Entity entity = 1;
+ }

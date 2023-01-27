@@ -12,7 +12,7 @@ import (
 
 func TestNETServer_Conn(t *testing.T) {
 	opts := grpc.WithTransportCredentials(insecure.NewCredentials())
-	conn, err := grpc.Dial(port, opts)
+	conn, err := grpc.Dial(addr, opts)
 	if err != nil {
 		t.Error("could not connect to server: ", err)
 	}
@@ -23,7 +23,7 @@ func TestNETServer_Request(t *testing.T) {
 	opts := grpc.WithTransportCredentials(insecure.NewCredentials())
 	for i := 0; i < 5; i++ {
 		t.Run(fmt.Sprintf("Test #%d", i), func(t *testing.T) {
-			conn, err := grpc.Dial(port, opts)
+			conn, err := grpc.Dial(addr, opts)
 			if err != nil {
 				t.Error("could not connect to TCP server: ", err)
 			}
