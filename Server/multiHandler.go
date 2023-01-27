@@ -5,17 +5,18 @@ import (
 	"errors"
 	"exampleMulti/backend"
 	pb "exampleMulti/proto"
-	"github.com/google/uuid"
-	"google.golang.org/grpc/metadata"
 	"log"
 	"math/rand"
 	"regexp"
 	"sync"
 	"time"
+
+	"github.com/google/uuid"
+	"google.golang.org/grpc/metadata"
 )
 
 const (
-	clientTimeout = 15
+	clientTimeout = 2 * time.Minute
 	maxClients    = 8
 )
 
@@ -91,11 +92,6 @@ func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) 
 func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 	ctx := srv.Context()
 
-	//playerID, err := uuid.Parse(srv.Id)
-	//if err != nil {
-	//	return nil, err
-	//}
-
 	currentClient, err := s.getClientFromContext(ctx)
 	if err != nil {
 		return err
@@ -116,9 +112,8 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 				currentClient.done <- errors.New("failed to receive request")
 				return
 			}
-			log.Printf("got message %+v", req)
+			// log.Printf("got message %+v", req)
 			currentClient.lastMessage = time.Now()
-
 			switch req.GetAction().(type) {
 			case *pb.Request_Move:
 				s.handleMoveRequest(req, currentClient)
@@ -147,10 +142,11 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 		return nil, errors.New("the server is full")
 	}
 
-	re := regexp.MustCompile("^[a-zA-Z0-9]+$")
+	re := regexp.MustCompile("^[a-zA-Z0-9 _-]+$")
 	if !re.MatchString(req.Name) {
 		return nil, errors.New("invalid name provided")
 	}
+	log.Println("Incoming connection from", req.Name)
 
 	colour := randColour()
 
@@ -195,8 +191,10 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 
 	// Add the new client.
 	s.mu.Lock()
-	s.clients[id] = &client{
-		id:          id,
+	token := uuid.New()
+	s.clients[token] = &client{
+		id:          token,
+		playerID:    id,
 		done:        make(chan error),
 		lastMessage: time.Now(),
 	}
@@ -204,6 +202,7 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 
 	return &pb.ConnectResponse{
 		Id:       id.String(),
+		Token:    token.String(),
 		Entities: entities,
 	}, nil
 }
@@ -213,7 +212,7 @@ func (s *GameServer) watchTimeout() {
 	go func() {
 		for {
 			for _, client := range s.clients {
-				if time.Now().Sub(client.lastMessage).Minutes() > clientTimeout {
+				if time.Since(client.lastMessage) > clientTimeout {
 					client.done <- errors.New("you have been timed out")
 					return
 				}
@@ -255,7 +254,7 @@ func (s *GameServer) broadcast(resp *pb.Response) {
 			currentClient.done <- errors.New("failed to broadcast message")
 			continue
 		}
-		log.Printf("%s - broadcasted %+v", resp, id)
+		//log.Printf("%s - broadcasted %+v", resp, id)
 	}
 	s.mu.Unlock()
 }
