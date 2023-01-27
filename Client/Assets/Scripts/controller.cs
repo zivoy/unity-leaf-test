@@ -22,6 +22,11 @@ public class controller : MonoBehaviour
         if (!Controlled) return;
         Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
                
-        _rigidbody.MovePosition(transform.position + input * (Time.deltaTime * m_Speed));
+        SetPosition(transform.position + input * (Time.deltaTime * m_Speed));
+    }
+
+    public void SetPosition(Vector3 pos)
+    {
+        _rigidbody.MovePosition(pos);
     }
 }

@@ -13,7 +13,10 @@ func GetProtoEntity(entity backend.Identifier) *Entity {
 		protoPlayer := Entity_Player{
 			Player: GetProtoPlayer(player),
 		}
-		return &Entity{Entity: &protoPlayer}
+		return &Entity{
+			Entity: &protoPlayer,
+			Id:     player.ID().String(),
+		}
 	}
 	log.Printf("cannot get proto entity for %T -> %+v", entity, entity)
 	return nil
@@ -21,9 +24,8 @@ func GetProtoEntity(entity backend.Identifier) *Entity {
 
 func GetProtoPlayer(player *backend.Player) *Player {
 	r, g, b, _ := player.Colour.RGBA()
-	col := fmt.Sprintf("#%02x%02x%02x", r& 0xff, g& 0xff, b& 0xff)
+	col := fmt.Sprintf("#%02x%02x%02x", r&0xff, g&0xff, b&0xff)
 	return &Player{
-		Id:       player.ID().String(),
 		Name:     player.Name,
 		Position: GetProtoCoordinate(player.Position()),
 		Colour:   col,

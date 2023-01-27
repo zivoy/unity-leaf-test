@@ -1,18 +1,15 @@
-using System;
-using Grpc.Core;
 using UnityEngine;
 
 public class ColourClient
 {
-    private ColourGenerator.ColourGeneratorClient _client;
-    private readonly Channel _channel;
-    private readonly string _serverAddress = "localhost:50051";
+    private readonly ColourGenerator.ColourGeneratorClient _client;
+    private readonly Connection _connection;
 
     internal ColourClient()
     {
 
-        _channel = new Channel(_serverAddress, ChannelCredentials.Insecure);
-        _client = new ColourGenerator.ColourGeneratorClient(_channel);
+        _connection = Connection.GetInstance();
+        _client = new ColourGenerator.ColourGeneratorClient(_connection.GetChannel());
     }
 
     internal string GetRandomColour(string currentColour)
@@ -25,7 +22,6 @@ public class ColourClient
 
     private void OnDisable()
     {
-        Debug.Log("Shutting down channel");
-        _channel.ShutdownAsync().Wait();
+        _connection.Dispose();
     }
 }

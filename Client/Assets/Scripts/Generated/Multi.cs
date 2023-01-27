@@ -23,30 +23,31 @@ public static partial class MultiReflection {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
           "ChBncnBjL211bHRpLnByb3RvIh4KDkNvbm5lY3RSZXF1ZXN0EgwKBG5hbWUY",
-          "ASABKAkiOAoPQ29ubmVjdFJlc3BvbnNlEgoKAmlkGAEgASgJEhkKCGVudGl0",
-          "aWVzGAIgAygLMgcuRW50aXR5Ii4KB1JlcXVlc3QSGQoEbW92ZRgBIAEoCzIJ",
-          "LlBvc2l0aW9uSABCCAoGYWN0aW9uIoMBCghSZXNwb25zZRIfCglhZGRFbnRp",
-          "dHkYASABKAsyCi5BZGRFbnRpdHlIABIlCgx1cGRhdGVFbnRpdHkYAiABKAsy",
-          "DS5VcGRhdGVFbnRpdHlIABIlCgxyZW1vdmVFbnRpdHkYAyABKAsyDS5SZW1v",
-          "dmVFbnRpdHlIAEIICgZhY3Rpb24iIAoIUG9zaXRpb24SCQoBeBgBIAEoAhIJ",
-          "CgF5GAIgASgCIk8KBlBsYXllchIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJ",
-          "EhsKCHBvc2l0aW9uGAMgASgLMgkuUG9zaXRpb24SDgoGY29sb3VyGAQgASgJ",
-          "Ii0KBkVudGl0eRIZCgZwbGF5ZXIYASABKAsyBy5QbGF5ZXJIAEIICgZlbnRp",
-          "dHkiJAoJQWRkRW50aXR5EhcKBmVudGl0eRgBIAEoCzIHLkVudGl0eSInCgxV",
-          "cGRhdGVFbnRpdHkSFwoGZW50aXR5GAEgASgLMgcuRW50aXR5IhoKDFJlbW92",
-          "ZUVudGl0eRIKCgJpZBgBIAEoCTJbCgRHYW1lEi4KB0Nvbm5lY3QSDy5Db25u",
-          "ZWN0UmVxdWVzdBoQLkNvbm5lY3RSZXNwb25zZSIAEiMKBlN0cmVhbRIILlJl",
-          "cXVlc3QaCS5SZXNwb25zZSIAKAEwAUIIWgZwcm90by9iBnByb3RvMw=="));
+          "ASABKAkiRwoPQ29ubmVjdFJlc3BvbnNlEgoKAmlkGAEgASgJEg0KBXRva2Vu",
+          "GAIgASgJEhkKCGVudGl0aWVzGAMgAygLMgcuRW50aXR5Ii4KB1JlcXVlc3QS",
+          "GQoEbW92ZRgBIAEoCzIJLlBvc2l0aW9uSABCCAoGYWN0aW9uIoMBCghSZXNw",
+          "b25zZRIfCglhZGRFbnRpdHkYASABKAsyCi5BZGRFbnRpdHlIABIlCgx1cGRh",
+          "dGVFbnRpdHkYAiABKAsyDS5VcGRhdGVFbnRpdHlIABIlCgxyZW1vdmVFbnRp",
+          "dHkYAyABKAsyDS5SZW1vdmVFbnRpdHlIAEIICgZhY3Rpb24iIAoIUG9zaXRp",
+          "b24SCQoBeBgBIAEoAhIJCgF5GAIgASgCIkMKBlBsYXllchIMCgRuYW1lGAIg",
+          "ASgJEhsKCHBvc2l0aW9uGAMgASgLMgkuUG9zaXRpb24SDgoGY29sb3VyGAQg",
+          "ASgJIjkKBkVudGl0eRIKCgJpZBgBIAEoCRIZCgZwbGF5ZXIYAiABKAsyBy5Q",
+          "bGF5ZXJIAEIICgZlbnRpdHkiJAoJQWRkRW50aXR5EhcKBmVudGl0eRgBIAEo",
+          "CzIHLkVudGl0eSInCgxVcGRhdGVFbnRpdHkSFwoGZW50aXR5GAEgASgLMgcu",
+          "RW50aXR5IhoKDFJlbW92ZUVudGl0eRIKCgJpZBgBIAEoCTJbCgRHYW1lEi4K",
+          "B0Nvbm5lY3QSDy5Db25uZWN0UmVxdWVzdBoQLkNvbm5lY3RSZXNwb25zZSIA",
+          "EiMKBlN0cmVhbRIILlJlcXVlc3QaCS5SZXNwb25zZSIAKAEwAUIIWgZwcm90",
+          "by9iBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
           new pbr::GeneratedClrTypeInfo(typeof(global::ConnectRequest), global::ConnectRequest.Parser, new[]{ "Name" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::ConnectResponse), global::ConnectResponse.Parser, new[]{ "Id", "Entities" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ConnectResponse), global::ConnectResponse.Parser, new[]{ "Id", "Token", "Entities" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::Request), global::Request.Parser, new[]{ "Move" }, new[]{ "Action" }, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::Response), global::Response.Parser, new[]{ "AddEntity", "UpdateEntity", "RemoveEntity" }, new[]{ "Action" }, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::Position), global::Position.Parser, new[]{ "X", "Y" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::Player), global::Player.Parser, new[]{ "Id", "Name", "Position", "Colour" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::Entity), global::Entity.Parser, new[]{ "Player" }, new[]{ "Entity" }, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::Player), global::Player.Parser, new[]{ "Name", "Position", "Colour" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::Entity), global::Entity.Parser, new[]{ "Id", "Player" }, new[]{ "Entity" }, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::AddEntity), global::AddEntity.Parser, new[]{ "Entity" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::UpdateEntity), global::UpdateEntity.Parser, new[]{ "Entity" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RemoveEntity), global::RemoveEntity.Parser, new[]{ "Id" }, null, null, null, null)
@@ -280,6 +281,7 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public ConnectResponse(ConnectResponse other) : this() {
     id_ = other.id_;
+    token_ = other.token_;
     entities_ = other.entities_.Clone();
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
@@ -302,10 +304,22 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
     }
   }
 
+  /// <summary>Field number for the "token" field.</summary>
+  public const int TokenFieldNumber = 2;
+  private string token_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Token {
+    get { return token_; }
+    set {
+      token_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
   /// <summary>Field number for the "entities" field.</summary>
-  public const int EntitiesFieldNumber = 2;
+  public const int EntitiesFieldNumber = 3;
   private static readonly pb::FieldCodec<global::Entity> _repeated_entities_codec
-      = pb::FieldCodec.ForMessage(18, global::Entity.Parser);
+      = pb::FieldCodec.ForMessage(26, global::Entity.Parser);
   private readonly pbc::RepeatedField<global::Entity> entities_ = new pbc::RepeatedField<global::Entity>();
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -329,6 +343,7 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
       return true;
     }
     if (Id != other.Id) return false;
+    if (Token != other.Token) return false;
     if(!entities_.Equals(other.entities_)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
@@ -338,6 +353,7 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
   public override int GetHashCode() {
     int hash = 1;
     if (Id.Length != 0) hash ^= Id.GetHashCode();
+    if (Token.Length != 0) hash ^= Token.GetHashCode();
     hash ^= entities_.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
@@ -361,6 +377,10 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
       output.WriteRawTag(10);
       output.WriteString(Id);
     }
+    if (Token.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Token);
+    }
     entities_.WriteTo(output, _repeated_entities_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -376,6 +396,10 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
       output.WriteRawTag(10);
       output.WriteString(Id);
     }
+    if (Token.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Token);
+    }
     entities_.WriteTo(ref output, _repeated_entities_codec);
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -389,6 +413,9 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
     int size = 0;
     if (Id.Length != 0) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+    }
+    if (Token.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Token);
     }
     size += entities_.CalculateSize(_repeated_entities_codec);
     if (_unknownFields != null) {
@@ -405,6 +432,9 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
     }
     if (other.Id.Length != 0) {
       Id = other.Id;
+    }
+    if (other.Token.Length != 0) {
+      Token = other.Token;
     }
     entities_.Add(other.entities_);
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -427,6 +457,10 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
           break;
         }
         case 18: {
+          Token = input.ReadString();
+          break;
+        }
+        case 26: {
           entities_.AddEntriesFrom(input, _repeated_entities_codec);
           break;
         }
@@ -450,6 +484,10 @@ public sealed partial class ConnectResponse : pb::IMessage<ConnectResponse>
           break;
         }
         case 18: {
+          Token = input.ReadString();
+          break;
+        }
+        case 26: {
           entities_.AddEntriesFrom(ref input, _repeated_entities_codec);
           break;
         }
@@ -1290,7 +1328,6 @@ public sealed partial class Player : pb::IMessage<Player>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public Player(Player other) : this() {
-    id_ = other.id_;
     name_ = other.name_;
     position_ = other.position_ != null ? other.position_.Clone() : null;
     colour_ = other.colour_;
@@ -1301,18 +1338,6 @@ public sealed partial class Player : pb::IMessage<Player>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public Player Clone() {
     return new Player(this);
-  }
-
-  /// <summary>Field number for the "id" field.</summary>
-  public const int IdFieldNumber = 1;
-  private string id_ = "";
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-  public string Id {
-    get { return id_; }
-    set {
-      id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-    }
   }
 
   /// <summary>Field number for the "name" field.</summary>
@@ -1366,7 +1391,6 @@ public sealed partial class Player : pb::IMessage<Player>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (Id != other.Id) return false;
     if (Name != other.Name) return false;
     if (!object.Equals(Position, other.Position)) return false;
     if (Colour != other.Colour) return false;
@@ -1377,7 +1401,6 @@ public sealed partial class Player : pb::IMessage<Player>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
-    if (Id.Length != 0) hash ^= Id.GetHashCode();
     if (Name.Length != 0) hash ^= Name.GetHashCode();
     if (position_ != null) hash ^= Position.GetHashCode();
     if (Colour.Length != 0) hash ^= Colour.GetHashCode();
@@ -1399,10 +1422,6 @@ public sealed partial class Player : pb::IMessage<Player>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (Id.Length != 0) {
-      output.WriteRawTag(10);
-      output.WriteString(Id);
-    }
     if (Name.Length != 0) {
       output.WriteRawTag(18);
       output.WriteString(Name);
@@ -1425,10 +1444,6 @@ public sealed partial class Player : pb::IMessage<Player>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (Id.Length != 0) {
-      output.WriteRawTag(10);
-      output.WriteString(Id);
-    }
     if (Name.Length != 0) {
       output.WriteRawTag(18);
       output.WriteString(Name);
@@ -1451,9 +1466,6 @@ public sealed partial class Player : pb::IMessage<Player>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
-    if (Id.Length != 0) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
-    }
     if (Name.Length != 0) {
       size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
     }
@@ -1474,9 +1486,6 @@ public sealed partial class Player : pb::IMessage<Player>
   public void MergeFrom(Player other) {
     if (other == null) {
       return;
-    }
-    if (other.Id.Length != 0) {
-      Id = other.Id;
     }
     if (other.Name.Length != 0) {
       Name = other.Name;
@@ -1505,10 +1514,6 @@ public sealed partial class Player : pb::IMessage<Player>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 10: {
-          Id = input.ReadString();
-          break;
-        }
         case 18: {
           Name = input.ReadString();
           break;
@@ -1539,10 +1544,6 @@ public sealed partial class Player : pb::IMessage<Player>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 10: {
-          Id = input.ReadString();
-          break;
-        }
         case 18: {
           Name = input.ReadString();
           break;
@@ -1599,6 +1600,7 @@ public sealed partial class Entity : pb::IMessage<Entity>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public Entity(Entity other) : this() {
+    id_ = other.id_;
     switch (other.EntityCase) {
       case EntityOneofCase.Player:
         Player = other.Player.Clone();
@@ -1614,8 +1616,20 @@ public sealed partial class Entity : pb::IMessage<Entity>
     return new Entity(this);
   }
 
+  /// <summary>Field number for the "id" field.</summary>
+  public const int IdFieldNumber = 1;
+  private string id_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Id {
+    get { return id_; }
+    set {
+      id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
   /// <summary>Field number for the "player" field.</summary>
-  public const int PlayerFieldNumber = 1;
+  public const int PlayerFieldNumber = 2;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public global::Player Player {
@@ -1630,7 +1644,7 @@ public sealed partial class Entity : pb::IMessage<Entity>
   /// <summary>Enum of possible cases for the "entity" oneof.</summary>
   public enum EntityOneofCase {
     None = 0,
-    Player = 1,
+    Player = 2,
   }
   private EntityOneofCase entityCase_ = EntityOneofCase.None;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1661,6 +1675,7 @@ public sealed partial class Entity : pb::IMessage<Entity>
     if (ReferenceEquals(other, this)) {
       return true;
     }
+    if (Id != other.Id) return false;
     if (!object.Equals(Player, other.Player)) return false;
     if (EntityCase != other.EntityCase) return false;
     return Equals(_unknownFields, other._unknownFields);
@@ -1670,6 +1685,7 @@ public sealed partial class Entity : pb::IMessage<Entity>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override int GetHashCode() {
     int hash = 1;
+    if (Id.Length != 0) hash ^= Id.GetHashCode();
     if (entityCase_ == EntityOneofCase.Player) hash ^= Player.GetHashCode();
     hash ^= (int) entityCase_;
     if (_unknownFields != null) {
@@ -1690,8 +1706,12 @@ public sealed partial class Entity : pb::IMessage<Entity>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (entityCase_ == EntityOneofCase.Player) {
+    if (Id.Length != 0) {
       output.WriteRawTag(10);
+      output.WriteString(Id);
+    }
+    if (entityCase_ == EntityOneofCase.Player) {
+      output.WriteRawTag(18);
       output.WriteMessage(Player);
     }
     if (_unknownFields != null) {
@@ -1704,8 +1724,12 @@ public sealed partial class Entity : pb::IMessage<Entity>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (entityCase_ == EntityOneofCase.Player) {
+    if (Id.Length != 0) {
       output.WriteRawTag(10);
+      output.WriteString(Id);
+    }
+    if (entityCase_ == EntityOneofCase.Player) {
+      output.WriteRawTag(18);
       output.WriteMessage(Player);
     }
     if (_unknownFields != null) {
@@ -1718,6 +1742,9 @@ public sealed partial class Entity : pb::IMessage<Entity>
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public int CalculateSize() {
     int size = 0;
+    if (Id.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+    }
     if (entityCase_ == EntityOneofCase.Player) {
       size += 1 + pb::CodedOutputStream.ComputeMessageSize(Player);
     }
@@ -1732,6 +1759,9 @@ public sealed partial class Entity : pb::IMessage<Entity>
   public void MergeFrom(Entity other) {
     if (other == null) {
       return;
+    }
+    if (other.Id.Length != 0) {
+      Id = other.Id;
     }
     switch (other.EntityCase) {
       case EntityOneofCase.Player:
@@ -1758,6 +1788,10 @@ public sealed partial class Entity : pb::IMessage<Entity>
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
         case 10: {
+          Id = input.ReadString();
+          break;
+        }
+        case 18: {
           global::Player subBuilder = new global::Player();
           if (entityCase_ == EntityOneofCase.Player) {
             subBuilder.MergeFrom(Player);
@@ -1782,6 +1816,10 @@ public sealed partial class Entity : pb::IMessage<Entity>
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
         case 10: {
+          Id = input.ReadString();
+          break;
+        }
+        case 18: {
           global::Player subBuilder = new global::Player();
           if (entityCase_ == EntityOneofCase.Player) {
             subBuilder.MergeFrom(Player);
