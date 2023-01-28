@@ -12,17 +12,21 @@ message ConnectRequest {
 }
 
 message ConnectResponse {
-  string id = 1;
   string token = 2;
   repeated Entity entities = 3;
 }
 
 message Request {
   oneof action {
-    Position move = 1;
+    MoveAction move = 1;
     AddEntity addEntity =2;
     RemoveEntity removeEntity = 3;
   }
+}
+
+message MoveAction {
+  string id = 1;
+  Position position = 2;
 }
 
 message Response {
@@ -34,8 +38,8 @@ message Response {
 }
 
 message Position {
-  float x = 1;
-  float y = 2;
+  float x = 2;
+  float y = 3;
 }
 
 message Entity {
@@ -48,6 +52,7 @@ message Entity {
 }
 message AddEntity {
   Entity entity = 1;
+  optional bool keepOnDisconnect=2;
 }
 
 message UpdateEntity {

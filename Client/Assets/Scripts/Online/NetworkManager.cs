@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Online
 {
@@ -10,7 +11,7 @@ namespace Online
     {
         private Game.GameClient _client;
 
-        public GameObject[] Spawnables;
+        public GameObject[] spawnables;
         private Dictionary<string, GameObject> _spawnables;
 
         //todo make server handle register and unregister events
@@ -38,15 +39,15 @@ namespace Online
             }
 
             _spawnables = new Dictionary<string, GameObject>();
-            foreach (var spawnable in Spawnables)
+            foreach (var spawnable in spawnables)
             {
-                if (_spawnables.ContainsKey(spawnable.name))
-                    throw new Exception("name collision with " + spawnable.name);
-                _spawnables[spawnable.name]=spawnable;
-                
-                if (spawnable.GetComponent<NetworkedElement>() != null) continue;
-                // Destroy(gameObject);
-                throw new Exception(spawnable.name + " is missing an script that implements NetworkedElement");
+                var networkedElement = spawnable.GetComponent<NetworkedElement>();
+                if (networkedElement == null)
+                    throw new Exception(spawnable.name + " is missing an script that implements NetworkedElement");
+
+                if (_spawnables.ContainsKey(networkedElement.ID()))
+                    throw new Exception("name collision with " + networkedElement.ID());
+                _spawnables[networkedElement.ID()] = spawnable;
             }
 
             DontDestroyOnLoad(gameObject);
@@ -56,13 +57,57 @@ namespace Online
             Connect();
         }
 
-        public void RegisterObject(NetworkedElement obj)
+        /// be careful with this and dont have scripts register on wake since it can lead to recursion 
+        public async void
+            RegisterObject(GameObject obj, bool removeOnDisconnect = true)
         {
-            throw new NotImplementedException("make me");
+            var id = Guid.NewGuid().ToString();
+            var networkedElement = obj.GetComponent<NetworkedElement>();
+            var pos = obj.transform.position;
+            var req = new Request
+            {
+                AddEntity = new AddEntity
+                {
+                    KeepOnDisconnect = !removeOnDisconnect,
+                    Entity = new Entity
+                    {
+                        Id = id,
+                        Type = networkedElement.ID(),
+                        Name = obj.name,
+                        Colour = ColorUtility.ToHtmlStringRGBA(obj.GetComponent<MeshRenderer>().material.color),
+                        Position = new Position
+                        {
+                            X = pos.x,
+                            Y = pos.y
+                        }
+                    }
+                }
+            };
+
+            _objects.Add(id, networkedElement);
+            await _stream.RequestStream.WriteAsync(req);
         }
-        public void UnregisterObject(NetworkedElement obj)
+
+        public async void UnregisterObject(NetworkedElement obj)
         {
-            throw new NotImplementedException("make me");
+            var id = "";
+            foreach (var keyValuePair in _objects)
+            {
+                if (!keyValuePair.Value.Equals(obj)) continue;
+                id = keyValuePair.Key;
+                break;
+            }
+
+            // not having it be removed from the dict and destroyed here so it will be done in the broadcast request
+
+            var req = new Request
+            {
+                RemoveEntity = new RemoveEntity
+                {
+                    Id = id
+                }
+            };
+            await _stream.RequestStream.WriteAsync(req);
         }
 
         private void Connect()
@@ -136,8 +181,14 @@ namespace Online
         private void AddEntity(Entity entity)
         {
             if (_objects.ContainsKey(entity.Id)) return;
-            var o = Instantiate(_spawnables[entity.Type]);
-            o.GetComponent<NetworkedElement>().HandleUpdate(entity);
+            var o = Instantiate(_spawnables[entity.Type], new Vector3
+            {
+                x = entity.Position.X,
+                z = entity.Position.Y
+            }, new Quaternion());
+            var script = o.GetComponent<NetworkedElement>();
+            script.HandleUpdate(entity);
+            _objects[entity.Id] = script;
         }
 
         private void RemoveEntity(Entity entity)
@@ -169,10 +220,14 @@ namespace Online
 
                 var req = new Request
                 {
-                    Move = new Position
+                    Move = new MoveAction
                     {
-                        X = pos.x,
-                        Y = pos.y
+                        Id = keyValuePair.Key,
+                        Position = new Position
+                        {
+                            X = pos.x,
+                            Y = pos.y
+                        }
                     }
                 };
                 await _stream.RequestStream.WriteAsync(req);

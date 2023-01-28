@@ -3,6 +3,7 @@ package proto
 import (
 	"exampleMulti/backend"
 	"fmt"
+	"github.com/google/uuid"
 )
 
 func GetProtoEntity(entity *backend.Entity) *Entity {
@@ -29,4 +30,9 @@ func GetBackendCoordinate(position *Position) backend.Coordinate {
 		X: float64(position.X),
 		Y: float64(position.Y),
 	}
+}
+
+func ParseUUID(id string) (uuid.UUID, bool) {
+	uid, err := uuid.Parse(id)
+	return uid, err == nil
 }

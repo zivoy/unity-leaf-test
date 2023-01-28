@@ -126,19 +126,6 @@ type MoveChange struct {
 	Position Coordinate
 }
 
-// AddEntityChange occurs when an entity is added in response to an action.
-// Currently this is only used for new lasers and players joining the game.
-type AddEntityChange struct {
-	Change
-	*Entity
-}
-
-// RemoveEntityChange occurs when an entity has been removed from the game.
-type RemoveEntityChange struct {
-	Change
-	*Entity
-}
-
 // Action is sent by the client when attempting to change game state. The
 // engine can choose to reject Actions if they are invalid or performed too
 // frequently.

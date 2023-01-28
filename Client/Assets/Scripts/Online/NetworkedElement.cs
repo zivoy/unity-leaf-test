@@ -6,6 +6,8 @@ namespace Online
     {
         public Vector2 GetPosition();
         public ElementType GetControlType();
+        public string ID();
+        
         public void Destroy();
         
         public void HandleUpdate(Entity entity);

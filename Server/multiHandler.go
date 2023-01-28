@@ -1,5 +1,9 @@
 package main
 
+//todo rewrite this
+// there will be a call that lists active sessions
+// you can make a new session by submiting a key with connect
+// empty sersions get deleted
 import (
 	"context"
 	"errors"
@@ -16,7 +20,7 @@ import (
 )
 
 const (
-	clientTimeout = 1 * time.Minute
+	clientTimeout = 2 * time.Minute
 	maxClients    = 4
 )
 
@@ -25,7 +29,7 @@ type client struct {
 	streamServer pb.Game_StreamServer
 	lastMessage  time.Time
 	done         chan error
-	playerID     uuid.UUID
+	objects      []uuid.UUID
 	id           uuid.UUID
 }
 
@@ -54,19 +58,26 @@ func (s *GameServer) removeClient(id uuid.UUID) {
 	s.mu.Unlock()
 }
 
-func (s *GameServer) removePlayer(playerID uuid.UUID) {
+func (s *GameServer) removeRemovables(entityIDs []uuid.UUID) {
+	for _, entityID := range entityIDs {
+		s.removeEntity(entityID)
+	}
+}
+
+func (s *GameServer) removeEntity(entityID uuid.UUID) {
 	s.game.Mu.Lock()
-	s.game.RemoveEntity(playerID)
+	s.game.RemoveEntity(entityID)
 	s.game.Mu.Unlock()
 
 	resp := pb.Response{
 		Action: &pb.Response_RemoveEntity{
 			RemoveEntity: &pb.RemoveEntity{
-				Id: playerID.String(),
+				Id: entityID.String(),
 			},
 		},
 	}
 	s.broadcast(&resp)
+
 }
 
 func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) {
@@ -75,8 +86,8 @@ func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) 
 	if len(tokenRaw) == 0 {
 		return nil, errors.New("no token provided")
 	}
-	token, err := uuid.Parse(tokenRaw[0])
-	if err != nil {
+	token, ok := pb.ParseUUID(tokenRaw[0])
+	if !ok {
 		return nil, errors.New("cannot parse token")
 	}
 	s.mu.RLock()
@@ -116,7 +127,11 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 			currentClient.lastMessage = time.Now()
 			switch req.GetAction().(type) {
 			case *pb.Request_Move:
-				s.handleMoveRequest(req, currentClient)
+				s.handleMoveRequest(req)
+			case *pb.Request_AddEntity:
+				s.handleAddRequest(req, currentClient)
+			case *pb.Request_RemoveEntity:
+				s.handleRemoveRequest(req)
 			}
 		}
 	}()
@@ -132,7 +147,7 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 
 	log.Printf("%s - removing client", currentClient.id)
 	s.removeClient(currentClient.id)
-	s.removePlayer(currentClient.playerID)
+	s.removeRemovables(currentClient.objects)
 
 	return doneError
 }
@@ -157,13 +172,10 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	rand.Seed(time.Now().Unix())
 	startCoordinate := backend.Coordinate{Y: 0, X: 0}
 
-	// make up an id for the user
-	id := uuid.New()
-
 	player := &backend.Entity{
 		Name:            req.Name,
 		Colour:          colour,
-		IdentifierBase:  backend.IdentifierBase{UUID: id},
+		IdentifierBase:  backend.IdentifierBase{UUID: uuid.New()}, //todo why is the user being regiestered here
 		CurrentPosition: startCoordinate,
 	}
 	s.game.Mu.Lock()
@@ -181,29 +193,18 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	}
 	s.game.Mu.RUnlock()
 
-	// Inform all other clients of the new player.
-	resp := pb.Response{
-		Action: &pb.Response_AddEntity{
-			AddEntity: &pb.AddEntity{
-				Entity: pb.GetProtoEntity(player),
-			},
-		},
-	}
-	s.broadcast(&resp)
-
 	// Add the new client.
 	s.mu.Lock()
 	token := uuid.New()
 	s.clients[token] = &client{
 		id:          token,
-		playerID:    id,
+		objects:     make([]uuid.UUID, 0),
 		done:        make(chan error),
 		lastMessage: time.Now(),
 	}
 	s.mu.Unlock()
 
 	return &pb.ConnectResponse{
-		Id:       id.String(),
 		Token:    token.String(),
 		Entities: entities,
 	}, nil
@@ -233,12 +234,6 @@ func (s *GameServer) watchChanges() {
 			case backend.MoveChange:
 				change := change.(backend.MoveChange)
 				s.handleMoveChange(change)
-			case backend.AddEntityChange:
-				change := change.(backend.AddEntityChange)
-				s.handleAddEntityChange(change)
-			case backend.RemoveEntityChange:
-				change := change.(backend.RemoveEntityChange)
-				s.handleRemoveEntityChange(change)
 			}
 		}
 	}()
@@ -262,13 +257,45 @@ func (s *GameServer) broadcast(resp *pb.Response) {
 }
 
 // handleMoveRequest makes a request to the game engine to move a player.
-func (s *GameServer) handleMoveRequest(req *pb.Request, currentClient *client) {
+func (s *GameServer) handleMoveRequest(req *pb.Request) {
 	move := req.GetMove()
+	id, ok := pb.ParseUUID(move.GetId())
+	if !ok {
+		log.Println("can't parse id to move")
+		return
+	}
 	s.game.ActionChannel <- backend.MoveAction{
-		ID:       currentClient.playerID,
-		Position: pb.GetBackendCoordinate(move),
+		ID:       id,
+		Position: pb.GetBackendCoordinate(move.GetPosition()),
 		Created:  time.Now(),
 	}
+}
+
+func (s *GameServer) handleRemoveRequest(req *pb.Request) {
+	remove := req.GetRemoveEntity()
+	if id, ok := pb.ParseUUID(remove.Id); ok {
+		s.removeEntity(id)
+		return
+	}
+	log.Println("can't parse id to remove")
+}
+
+func (s *GameServer) handleAddRequest(req *pb.Request, activeClient *client) {
+	add := req.GetAddEntity()
+	ent := add.GetEntity()
+
+	if id, ok := pb.ParseUUID(ent.GetId()); !add.GetKeepOnDisconnect() && ok {
+		activeClient.objects = append(activeClient.objects, id)
+	}
+
+	resp := pb.Response{
+		Action: &pb.Response_AddEntity{
+			AddEntity: &pb.AddEntity{
+				Entity: ent,
+			},
+		},
+	}
+	s.broadcast(&resp)
 }
 
 func (s *GameServer) handleMoveChange(change backend.MoveChange) {
@@ -276,28 +303,6 @@ func (s *GameServer) handleMoveChange(change backend.MoveChange) {
 		Action: &pb.Response_UpdateEntity{
 			UpdateEntity: &pb.UpdateEntity{
 				Entity: pb.GetProtoEntity(change.Entity),
-			},
-		},
-	}
-	s.broadcast(&resp)
-}
-
-func (s *GameServer) handleAddEntityChange(change backend.AddEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_AddEntity{
-			AddEntity: &pb.AddEntity{
-				Entity: pb.GetProtoEntity(change.Entity),
-			},
-		},
-	}
-	s.broadcast(&resp)
-}
-
-func (s *GameServer) handleRemoveEntityChange(change backend.RemoveEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_RemoveEntity{
-			RemoveEntity: &pb.RemoveEntity{
-				Id: change.Entity.ID().String(),
 			},
 		},
 	}
