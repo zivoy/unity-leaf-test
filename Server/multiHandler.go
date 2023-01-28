@@ -1,17 +1,14 @@
 package main
 
 //todo rewrite this
-// there will be a call that lists active sessions
-// you can make a new session by submiting a key with connect
 // empty sersions get deleted
 import (
 	"context"
 	"errors"
 	"exampleMulti/backend"
 	pb "exampleMulti/proto"
-	"image/color"
+	"io"
 	"log"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -24,60 +21,100 @@ const (
 	maxClients    = 4
 )
 
-// client contains information about connected clients.
+type token uuid.UUID
+
+func (t token) UUID() uuid.UUID {
+	return uuid.UUID(t)
+}
+func (t token) String() string {
+	return t.UUID().String()
+}
+
 type client struct {
 	streamServer pb.Game_StreamServer
 	lastMessage  time.Time
 	done         chan error
-	objects      []uuid.UUID
-	id           uuid.UUID
+	id           token
+	session      *backend.Game
 }
 
 // GameServer is used to stream game information with clients.
 type GameServer struct {
 	pb.UnimplementedGameServer
-	game    *backend.Game
-	clients map[uuid.UUID]*client
-	mu      sync.RWMutex
+	ChangeChannel chan backend.Change
+	games         map[string]*backend.Game
+	sessionUsers  map[string][]token
+	clients       map[token]*client
+	mu            sync.RWMutex
 }
 
 // NewGameServer constructs a new game server struct.
-func NewGameServer(game *backend.Game) *GameServer {
+func NewGameServer() *GameServer {
 	server := &GameServer{
-		game:    game,
-		clients: make(map[uuid.UUID]*client),
+		games:         make(map[string]*backend.Game),
+		clients:       make(map[token]*client),
+		ChangeChannel: make(chan backend.Change, 10),
+		sessionUsers:  make(map[string][]token),
 	}
 	server.watchChanges()
 	server.watchTimeout()
 	return server
 }
 
-func (s *GameServer) removeClient(id uuid.UUID) {
+func (s *GameServer) addClient(c *client) {
 	s.mu.Lock()
-	delete(s.clients, id)
+	s.clients[c.id] = c
+	s.sessionUsers[c.session.GameId] = append(s.sessionUsers[c.session.GameId], c.id)
 	s.mu.Unlock()
 }
 
-func (s *GameServer) removeRemovables(entityIDs []uuid.UUID) {
-	for _, entityID := range entityIDs {
-		s.removeEntity(entityID)
+func (s *GameServer) removeClient(id token) {
+	log.Printf("%s - removing client", id)
+
+	c := s.clients[id]
+	session := c.session
+	session.RemoveClientsEntities(c.id.UUID())
+	s.mu.Lock()
+	delete(s.clients, id)
+	users := s.sessionUsers[session.GameId]
+	serverUsers := make([]token, len(users)-1, maxClients)
+	count := 0
+	for _, i := range users {
+		if i == c.id {
+			continue
+		}
+		serverUsers[count] = i
+		count++
 	}
+	s.sessionUsers[session.GameId] = serverUsers
+	if len(serverUsers) == 0 {
+		s.removeSession(session.GameId)
+	}
+	s.mu.Unlock()
 }
 
-func (s *GameServer) removeEntity(entityID uuid.UUID) {
-	s.game.Mu.Lock()
-	s.game.RemoveEntity(entityID)
-	s.game.Mu.Unlock()
-
-	resp := pb.Response{
-		Action: &pb.Response_RemoveEntity{
-			RemoveEntity: &pb.RemoveEntity{
-				Id: entityID.String(),
-			},
-		},
+func (s *GameServer) makeSession(id string) {
+	s.mu.Lock()
+	_, ok := s.games[id]
+	if !ok {
+		s.games[id] = backend.NewGame(s.ChangeChannel, id)
+		s.sessionUsers[id] = make([]token, 0, maxClients)
+		log.Println("starting new session", id)
 	}
-	s.broadcast(&resp)
+	s.mu.Unlock()
+}
 
+func (s *GameServer) removeSession(id string) {
+	session := s.games[id]
+	session.Stop()
+	for _, c := range s.sessionUsers[id] {
+		s.clients[c].done <- errors.New("session has shut down")
+	}
+	s.mu.Lock()
+	delete(s.games, id)
+	delete(s.sessionUsers, id)
+	s.mu.Unlock()
+	log.Println("closing session", id)
 }
 
 func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) {
@@ -86,12 +123,12 @@ func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) 
 	if len(tokenRaw) == 0 {
 		return nil, errors.New("no token provided")
 	}
-	token, ok := pb.ParseUUID(tokenRaw[0])
+	uid, ok := ParseUUID(tokenRaw[0])
 	if !ok {
 		return nil, errors.New("cannot parse token")
 	}
 	s.mu.RLock()
-	currentClient, ok := s.clients[token]
+	currentClient, ok := s.clients[token(uid)]
 	s.mu.RUnlock()
 	if !ok {
 		return nil, errors.New("token not recognized")
@@ -111,13 +148,17 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 		return errors.New("stream already active")
 	}
 	currentClient.streamServer = srv
+	game := currentClient.session
 
-	log.Println("start new server")
-
+	defer s.removeClient(currentClient.id)
 	// Wait for stream requests.
 	go func() {
 		for {
 			req, err := srv.Recv()
+			if err == io.EOF {
+				currentClient.done <- err
+				return
+			} //todo check if done was closed
 			if err != nil {
 				log.Printf("receive error %v", err)
 				currentClient.done <- errors.New("failed to receive request")
@@ -125,13 +166,14 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 			}
 			// log.Printf("got message %+v", req)
 			currentClient.lastMessage = time.Now()
+
 			switch req.GetAction().(type) {
 			case *pb.Request_Move:
-				s.handleMoveRequest(req)
+				s.handleMoveRequest(game, req.GetMove())
 			case *pb.Request_AddEntity:
-				s.handleAddRequest(req, currentClient)
+				s.handleAddRequest(game, req.GetAddEntity(), uuid.UUID(currentClient.id))
 			case *pb.Request_RemoveEntity:
-				s.handleRemoveRequest(req)
+				s.handleRemoveRequest(game, req.GetRemoveEntity())
 			}
 		}
 	}()
@@ -143,66 +185,52 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 		doneError = ctx.Err()
 	case doneError = <-currentClient.done:
 	}
-	log.Printf(`stream done with error "%v"`, doneError)
+	close(currentClient.done)
 
-	log.Printf("%s - removing client", currentClient.id)
-	s.removeClient(currentClient.id)
-	s.removeRemovables(currentClient.objects)
+	if err != io.EOF {
+		log.Printf(`stream done with error "%v"`, doneError)
+	}
 
 	return doneError
 }
 
+func (s *GameServer) List(ctx context.Context, req *pb.SessionRequest) (*pb.SessionList, error) {
+	servers := make([]*pb.Server, 0, len(s.games))
+	for u := range s.games {
+		servers = append(servers, &pb.Server{
+			Id:     u,
+			Online: uint32(len(s.sessionUsers[u])),
+			Max:    maxClients,
+		})
+	}
+	return &pb.SessionList{
+		Servers: servers,
+	}, nil
+}
+
 func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.ConnectResponse, error) {
-	if len(s.clients) >= maxClients {
+	sessionId := req.GetSession()
+	if len(sessionId) < 3 || len(sessionId) > 25 {
+		return nil, errors.New("invalid sessionId Provided")
+	}
+	log.Println("Incoming connection to", req.Session)
+
+	s.makeSession(sessionId) //todo kill unjoined servers
+	sessionUsers := s.sessionUsers[sessionId]
+	if len(sessionUsers) >= maxClients {
 		return nil, errors.New("the server is full")
 	}
 
-	if len(req.Name) > 16 {
-		return nil, errors.New("invalid name provided")
-	}
-	log.Println("Incoming connection from", req.Name)
+	game := s.games[sessionId]
+	entities := game.GetProtoEntities()
 
-	colour := color.RGBA{
-		R: uint8(rand.Intn(256)),
-		G: uint8(rand.Intn(256)),
-		B: uint8(rand.Intn(256)),
-	}
-
-	// Choose a random spawn point.
-	rand.Seed(time.Now().Unix())
-	startCoordinate := backend.Coordinate{Y: 0, X: 0}
-
-	player := &backend.Entity{
-		Name:            req.Name,
-		Colour:          colour,
-		IdentifierBase:  backend.IdentifierBase{UUID: uuid.New()}, //todo why is the user being regiestered here
-		CurrentPosition: startCoordinate,
-	}
-	s.game.Mu.Lock()
-	s.game.AddEntity(player)
-	s.game.Mu.Unlock()
-
-	// Build a slice of current entities.
-	s.game.Mu.RLock()
-	entities := make([]*pb.Entity, 0, len(s.game.Entities))
-	for _, entity := range s.game.Entities {
-		pbEntity := pb.GetProtoEntity(entity)
-		if pbEntity != nil {
-			entities = append(entities, pbEntity)
-		}
-	}
-	s.game.Mu.RUnlock()
-
-	// Add the new client.
-	s.mu.Lock()
-	token := uuid.New()
-	s.clients[token] = &client{
+	token := token(uuid.New())
+	s.addClient(&client{
 		id:          token,
-		objects:     make([]uuid.UUID, 0),
 		done:        make(chan error),
 		lastMessage: time.Now(),
-	}
-	s.mu.Unlock()
+		session:     game,
+	})
 
 	return &pb.ConnectResponse{
 		Token:    token.String(),
@@ -225,25 +253,57 @@ func (s *GameServer) watchTimeout() {
 	}()
 }
 
-// WatchChanges waits for new game engine changes and broadcasts to clients.
 func (s *GameServer) watchChanges() {
 	go func() {
 		for {
-			change := <-s.game.ChangeChannel
+			change := <-s.ChangeChannel
 			switch change.(type) {
-			case backend.MoveChange:
-				change := change.(backend.MoveChange)
-				s.handleMoveChange(change)
+			case backend.UpdateEntityChange:
+				s.handleUpdateChange(change.(backend.UpdateEntityChange))
+			case backend.RemoveEntityChange:
+				s.handleRemoveChange(change.(backend.RemoveEntityChange))
+			case backend.AddEntityChange:
+				s.handleAddChange(change.(backend.AddEntityChange))
 			}
 		}
 	}()
 }
 
-// broadcast sends a response to all clients.
-func (s *GameServer) broadcast(resp *pb.Response) {
+func (s *GameServer) handleMoveRequest(game *backend.Game, req *pb.MoveAction) {
+	id, ok := ParseUUID(req.GetId())
+	if !ok {
+		log.Println("can't parse id to move")
+		return
+	}
+	game.MoveEntity(id, backend.CoordinateFromProto(req.GetPosition()))
+}
+
+func (s *GameServer) handleRemoveRequest(game *backend.Game, req *pb.RemoveEntity) {
+	id, ok := ParseUUID(req.GetId())
+	if !ok {
+		log.Println("can't parse id to remove")
+		return
+	}
+	game.RemoveEntity(id)
+}
+
+func (s *GameServer) handleAddRequest(game *backend.Game, req *pb.AddEntity, clientId uuid.UUID) {
+	ent, err := backend.EntityFromProto(req.GetEntity())
+	if err != nil {
+		log.Println("can't parse entity to add")
+		return
+	}
+
+	game.AddEntity(ent, clientId, !req.GetKeepOnDisconnect())
+}
+
+func (s *GameServer) broadcast(session string, resp *pb.Response) {
 	s.mu.Lock()
 	for id, currentClient := range s.clients {
 		if currentClient.streamServer == nil {
+			continue
+		}
+		if currentClient.session.GameId != session {
 			continue
 		}
 		if err := currentClient.streamServer.Send(resp); err != nil {
@@ -256,55 +316,35 @@ func (s *GameServer) broadcast(resp *pb.Response) {
 	s.mu.Unlock()
 }
 
-// handleMoveRequest makes a request to the game engine to move a player.
-func (s *GameServer) handleMoveRequest(req *pb.Request) {
-	move := req.GetMove()
-	id, ok := pb.ParseUUID(move.GetId())
-	if !ok {
-		log.Println("can't parse id to move")
-		return
-	}
-	s.game.ActionChannel <- backend.MoveAction{
-		ID:       id,
-		Position: pb.GetBackendCoordinate(move.GetPosition()),
-		Created:  time.Now(),
-	}
-}
-
-func (s *GameServer) handleRemoveRequest(req *pb.Request) {
-	remove := req.GetRemoveEntity()
-	if id, ok := pb.ParseUUID(remove.Id); ok {
-		s.removeEntity(id)
-		return
-	}
-	log.Println("can't parse id to remove")
-}
-
-func (s *GameServer) handleAddRequest(req *pb.Request, activeClient *client) {
-	add := req.GetAddEntity()
-	ent := add.GetEntity()
-
-	if id, ok := pb.ParseUUID(ent.GetId()); !add.GetKeepOnDisconnect() && ok {
-		activeClient.objects = append(activeClient.objects, id)
-	}
-
-	resp := pb.Response{
-		Action: &pb.Response_AddEntity{
-			AddEntity: &pb.AddEntity{
-				Entity: ent,
-			},
-		},
-	}
-	s.broadcast(&resp)
-}
-
-func (s *GameServer) handleMoveChange(change backend.MoveChange) {
+func (s *GameServer) handleUpdateChange(change backend.UpdateEntityChange) {
 	resp := pb.Response{
 		Action: &pb.Response_UpdateEntity{
 			UpdateEntity: &pb.UpdateEntity{
-				Entity: pb.GetProtoEntity(change.Entity),
+				Entity: change.Entity.ToProto(),
 			},
 		},
 	}
-	s.broadcast(&resp)
+	s.broadcast(change.GameID(), &resp)
+}
+
+func (s *GameServer) handleRemoveChange(change backend.RemoveEntityChange) {
+	resp := pb.Response{
+		Action: &pb.Response_RemoveEntity{
+			RemoveEntity: &pb.RemoveEntity{
+				Id: change.EntityID().String(),
+			},
+		},
+	}
+	s.broadcast(change.GameID(), &resp)
+}
+
+func (s *GameServer) handleAddChange(change backend.AddEntityChange) {
+	resp := pb.Response{
+		Action: &pb.Response_AddEntity{
+			AddEntity: &pb.AddEntity{
+				Entity: change.Entity.ToProto(),
+			},
+		},
+	}
+	s.broadcast(change.GameID(), &resp)
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using UnityEngine;
-using UnityEngine.Serialization;
+using protoBuff;
 
 namespace Online
 {
@@ -13,8 +13,6 @@ namespace Online
 
         public GameObject[] spawnables;
         private Dictionary<string, GameObject> _spawnables;
-
-        //todo make server handle register and unregister events
 
         public int updateFps = 60; // update at 60 fps
         private double _lastInterval;
@@ -53,13 +51,13 @@ namespace Online
             DontDestroyOnLoad(gameObject);
             _client = new Game.GameClient(Connection.GetInstance().GetChannel());
             _objects = new Dictionary<string, NetworkedElement>();
+            _objectLastPos = new Dictionary<string, Vector2>();
 
             Connect();
         }
 
         /// be careful with this and dont have scripts register on wake since it can lead to recursion 
-        public async void
-            RegisterObject(GameObject obj, bool removeOnDisconnect = true)
+        public async void RegisterObject(GameObject obj, bool removeOnDisconnect = true)
         {
             var id = Guid.NewGuid().ToString();
             var networkedElement = obj.GetComponent<NetworkedElement>();
@@ -74,7 +72,8 @@ namespace Online
                         Id = id,
                         Type = networkedElement.ID(),
                         Name = obj.name,
-                        Colour = ColorUtility.ToHtmlStringRGBA(obj.GetComponent<MeshRenderer>().material.color),
+                        Colour = ColorUtility.ToHtmlStringRGBA(
+                            obj.GetComponentInChildren<MeshRenderer>().material.color),
                         Position = new Position
                         {
                             X = pos.x,
@@ -112,7 +111,17 @@ namespace Online
 
         private void Connect()
         {
-            var conn = _client.Connect(new ConnectRequest { Name = "some random ass name" });
+            ConnectResponse conn;
+            try
+            {
+                conn = _client.Connect(new ConnectRequest { Session = "The Only One" });
+            }
+            catch (RpcException e)
+            {
+                if (e.StatusCode == StatusCode.Unknown) Debug.LogWarning(e.Status.Detail);
+                return;
+            }
+
             Debug.Log(conn);
             _token = conn.Token;
 
@@ -121,15 +130,24 @@ namespace Online
                 AddEntity(entity);
             }
 
-            _stream = _client.Stream(new Metadata
+            try
             {
-                new("authorization", _token)
-            });
+                _stream = _client.Stream(new Metadata
+                {
+                    new("authorization", _token)
+                });
+            }
+            catch (RpcException e)
+            {
+                if (e.StatusCode == StatusCode.Unknown) Debug.LogWarning(e.Status.Detail);
+                return;
+            }
+
             Task.Run(ReadStreamData);
             _active = true;
         }
 
-        //todo implement the rest of player connection, make sure that there is a connection
+        //todo implement the rest of player connection, make sure that there is a connection / detext disconnect, work out the dispose as well, its not leaving session
 
         // Update is called once per frame
         public void Update()
@@ -244,12 +262,14 @@ namespace Online
             Disconnect();
         }
 
-        private void Disconnect()
+        private async void Disconnect()
         {
             if (!_active) return;
             Debug.Log("shutting down stream");
             Connection.GetInstance().Dispose();
-            _stream?.RequestStream.CompleteAsync().Wait();
+            if (_stream != null)
+                await _stream.RequestStream.CompleteAsync();
+            
             _active = false;
         }
     }

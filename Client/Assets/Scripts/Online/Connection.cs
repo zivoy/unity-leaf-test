@@ -32,10 +32,11 @@ namespace Online
             return _channel;
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
             Debug.Log("Shutting down channel");
-            _channel?.ShutdownAsync().Wait();
+            if (_channel != null)
+                await _channel.ShutdownAsync();
             _instance = null;
         }
 

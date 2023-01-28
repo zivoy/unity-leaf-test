@@ -1,12 +1,13 @@
 package main
 
 import (
-	"exampleMulti/backend"
 	pb "exampleMulti/proto"
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -26,14 +27,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen to port [%s]: %v", addr, err)
 	}
-
-	game := backend.NewGame()
-	game.Start()
-	server := NewGameServer(game)
+	rand.Seed(time.Now().Unix())
+	server := NewGameServer()
 
 	s := grpc.NewServer()
 	pb.RegisterGameServer(s, server)
 
+	log.Println("Starting server")
 	if err = s.Serve(lis); err != nil {
 		log.Fatalln("Failed to start the server:", err)
 	}

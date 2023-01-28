@@ -1,8 +1,7 @@
 package backend
 
 import (
-	"fmt"
-	"math"
+	pb "exampleMulti/proto"
 	"sync"
 	"time"
 
@@ -10,159 +9,124 @@ import (
 )
 
 const (
-	moveThrottle = 100 * time.Millisecond
-	maxMove      = 5
+	ActionThrottle = time.Second / 80
+	maxMove        = 5
 )
 
-// Game is the backend engine for the game. It can be used regardless of how
-// game data is rendered, or if a game server is being used.
 type Game struct {
-	Entities        map[uuid.UUID]*Entity
-	Mu              sync.RWMutex
-	ChangeChannel   chan Change
-	ActionChannel   chan Action
-	lastAction      map[string]time.Time
-	IsAuthoritative bool
+	Entities      map[uuid.UUID]*Entity
+	Mu            sync.RWMutex
+	ActionChannel chan Action
+	ChangeChannel chan Change
+	done          chan interface{}
+	lastAction    map[string]time.Time
+	GameId        string
+
+	ownedEntities map[uuid.UUID][]uuid.UUID
 }
 
 // NewGame constructs a new Game struct.
-func NewGame() *Game {
+func NewGame(ChangeChannel chan Change, sessionId string) *Game {
 	game := Game{
-		Entities:        make(map[uuid.UUID]*Entity),
-		ActionChannel:   make(chan Action, 1),
-		lastAction:      make(map[string]time.Time),
-		ChangeChannel:   make(chan Change, 1),
-		IsAuthoritative: true,
+		Entities:      make(map[uuid.UUID]*Entity),
+		ActionChannel: make(chan Action, 1),
+		ChangeChannel: ChangeChannel,
+		lastAction:    make(map[string]time.Time),
+
+		ownedEntities: make(map[uuid.UUID][]uuid.UUID),
+		GameId:        sessionId,
 	}
 	return &game
 }
 
-// Start begins the main game loop, which waits for new actions and updates the
-// game state occordinly.
-func (game *Game) Start() {
-	go game.watchActions()
+func (g *Game) Start() {
+	go g.watchActions()
 }
 
-// watchActions waits for new actions to come in and performs them.
-func (game *Game) watchActions() {
+func (g *Game) Stop() {
+	g.done <- true
+}
+
+func (g *Game) watchActions() {
 	for {
-		action := <-game.ActionChannel
-		game.Mu.Lock()
-		action.Perform(game)
-		game.Mu.Unlock()
+		select {
+		case action := <-g.ActionChannel:
+			g.Mu.Lock()
+			action.Perform(g)
+			g.Mu.Unlock()
+		case <-g.done:
+			return
+		}
 	}
+}
+
+func (g *Game) GetProtoEntities() []*pb.Entity {
+	g.Mu.RLock()
+	entities := make([]*pb.Entity, 0, len(g.Entities))
+	for _, entity := range g.Entities {
+		entities = append(entities, entity.ToProto())
+	}
+	g.Mu.RUnlock()
+	return entities
 }
 
 // AddEntity adds an entity to the game.
-func (game *Game) AddEntity(entity *Entity) {
-	game.Entities[entity.ID()] = entity
+func (g *Game) AddEntity(entity *Entity, client uuid.UUID, RemoveOnDisconnect bool) {
+	g.ActionChannel <- &AddAction{
+		baseAction:         g.getBaseAction(entity.ID),
+		Entity:             entity,
+		ClientID:           client,
+		RemoveOnDisconnect: RemoveOnDisconnect,
+	}
 }
 
-// UpdateEntity updates an entity.
-func (game *Game) UpdateEntity(entity *Entity) {
-	game.Entities[entity.ID()] = entity
-}
-
-// GetEntity gets an entity from the game.
-func (game *Game) GetEntity(id uuid.UUID) *Entity {
-	return game.Entities[id]
+func (g *Game) MoveEntity(id uuid.UUID, position Coordinate) {
+	g.ActionChannel <- MoveAction{
+		baseAction: g.getBaseAction(id),
+		Position:   position,
+	}
 }
 
 // RemoveEntity removes an entity from the game.
-func (game *Game) RemoveEntity(id uuid.UUID) {
-	delete(game.Entities, id)
-}
-
-// checkLastActionTime checks the last time an action was performed.
-func (game *Game) checkLastActionTime(actionKey string, created time.Time, throttle time.Duration) bool {
-	lastAction, ok := game.lastAction[actionKey]
-	if ok && lastAction.After(created.Add(-1*throttle)) {
-		return false
-	}
-	return true
-}
-
-// updateLastActionTime sets the last action time.
-// The actionKey should be unique to the action and the actor (entity).
-func (game *Game) updateLastActionTime(actionKey string, created time.Time) {
-	game.lastAction[actionKey] = created
-}
-
-// sendChange sends a change to the change channel.
-func (game *Game) sendChange(change Change) {
-	select {
-	case game.ChangeChannel <- change:
+func (g *Game) RemoveEntity(id uuid.UUID) {
+	entity := g.Entities[id]
+	g.ActionChannel <- &RemoveAction{
+		baseAction: g.getBaseAction(id),
+		Entity:     entity,
 	}
 }
 
-// Coordinate is used for all position-related variables.
-type Coordinate struct {
-	X float64
-	Y float64
-}
-
-// Distance calculates the distance between two coordinates.
-func (c1 Coordinate) Distance(c2 Coordinate) float64 {
-	return math.Sqrt(math.Pow(c2.X-c1.X, 2) + math.Pow(c2.Y-c1.Y, 2))
-}
-
-// IdentifierBase is embedded to satisfy the Identifier interface.
-type IdentifierBase struct {
-	UUID uuid.UUID
-}
-
-// ID returns the UUID of an entity.
-func (e IdentifierBase) ID() uuid.UUID {
-	return e.UUID
-}
-
-// Change is sent by the game engine in response to Actions.
-type Change interface{}
-
-// MoveChange is sent when the game engine moves an entity.
-type MoveChange struct {
-	Change
-	*Entity
-	Position Coordinate
-}
-
-// Action is sent by the client when attempting to change game state. The
-// engine can choose to reject Actions if they are invalid or performed too
-// frequently.
-type Action interface {
-	Perform(game *Game)
-}
-
-// MoveAction is sent when a user presses an arrow key.
-type MoveAction struct {
-	Position Coordinate
-	ID       uuid.UUID
-	Created  time.Time
-}
-
-// Perform contains backend logic required to move an entity.
-func (action MoveAction) Perform(game *Game) {
-	entity := game.GetEntity(action.ID)
-	if entity == nil {
+// RemoveClientsEntities clears out all entities belonging to a user
+func (g *Game) RemoveClientsEntities(id uuid.UUID) {
+	entities, ok := g.ownedEntities[id]
+	if !ok {
 		return
 	}
+	g.Mu.Lock()
+	for _, eid := range entities {
+		g.RemoveEntity(eid)
+	}
+	delete(g.ownedEntities, id)
+	g.Mu.Unlock()
+}
 
-	actionKey := fmt.Sprintf("%T:%s", action, entity.ID().String())
-	if !game.checkLastActionTime(actionKey, action.Created, moveThrottle) {
-		return
-	}
-	position := entity.Position()
-	pos := action.Position
-	if d := position.Distance(pos); d > maxMove {
-		pos.Y /= d
-		pos.X /= d
-	}
-	entity.Set(pos)
-	// Inform the client that the entity moved.
-	change := MoveChange{
-		Entity:   entity,
-		Position: pos,
-	}
-	game.sendChange(change)
-	game.updateLastActionTime(actionKey, action.Created)
+func (g *Game) sendChange(change Change) {
+	g.ChangeChannel <- change
+}
+
+type Event interface {
+	EntityID() uuid.UUID
+	GameID() string
+}
+
+type baseEvent struct {
+	id  uuid.UUID
+	gId string
+}
+
+func (b baseEvent) EntityID() uuid.UUID {
+	return b.id
+}
+func (b baseEvent) GameID() string {
+	return b.gId
 }
