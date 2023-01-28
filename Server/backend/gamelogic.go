@@ -17,7 +17,7 @@ const (
 // Game is the backend engine for the game. It can be used regardless of how
 // game data is rendered, or if a game server is being used.
 type Game struct {
-	Entities        map[uuid.UUID]Identifier
+	Entities        map[uuid.UUID]*Entity
 	Mu              sync.RWMutex
 	ChangeChannel   chan Change
 	ActionChannel   chan Action
@@ -28,7 +28,7 @@ type Game struct {
 // NewGame constructs a new Game struct.
 func NewGame() *Game {
 	game := Game{
-		Entities:        make(map[uuid.UUID]Identifier),
+		Entities:        make(map[uuid.UUID]*Entity),
 		ActionChannel:   make(chan Action, 1),
 		lastAction:      make(map[string]time.Time),
 		ChangeChannel:   make(chan Change, 1),
@@ -54,17 +54,17 @@ func (game *Game) watchActions() {
 }
 
 // AddEntity adds an entity to the game.
-func (game *Game) AddEntity(entity Identifier) {
+func (game *Game) AddEntity(entity *Entity) {
 	game.Entities[entity.ID()] = entity
 }
 
 // UpdateEntity updates an entity.
-func (game *Game) UpdateEntity(entity Identifier) {
+func (game *Game) UpdateEntity(entity *Entity) {
 	game.Entities[entity.ID()] = entity
 }
 
 // GetEntity gets an entity from the game.
-func (game *Game) GetEntity(id uuid.UUID) Identifier {
+func (game *Game) GetEntity(id uuid.UUID) *Entity {
 	return game.Entities[id]
 }
 
@@ -106,17 +106,6 @@ func (c1 Coordinate) Distance(c2 Coordinate) float64 {
 	return math.Sqrt(math.Pow(c2.X-c1.X, 2) + math.Pow(c2.Y-c1.Y, 2))
 }
 
-// Identifier is an entity that provides an ID method.
-type Identifier interface {
-	ID() uuid.UUID
-}
-
-// Positioner is an entity that has a position.
-type Positioner interface {
-	Position() Coordinate
-	Set(position Coordinate)
-}
-
 // IdentifierBase is embedded to satisfy the Identifier interface.
 type IdentifierBase struct {
 	UUID uuid.UUID
@@ -133,7 +122,7 @@ type Change interface{}
 // MoveChange is sent when the game engine moves an entity.
 type MoveChange struct {
 	Change
-	Entity   Identifier
+	*Entity
 	Position Coordinate
 }
 
@@ -141,13 +130,13 @@ type MoveChange struct {
 // Currently this is only used for new lasers and players joining the game.
 type AddEntityChange struct {
 	Change
-	Entity Identifier
+	*Entity
 }
 
 // RemoveEntityChange occurs when an entity has been removed from the game.
 type RemoveEntityChange struct {
 	Change
-	Entity Identifier
+	*Entity
 }
 
 // Action is sent by the client when attempting to change game state. The
@@ -171,21 +160,17 @@ func (action MoveAction) Perform(game *Game) {
 		return
 	}
 
-	positioner, ok := entity.(Positioner)
-	if !ok {
-		return
-	}
 	actionKey := fmt.Sprintf("%T:%s", action, entity.ID().String())
 	if !game.checkLastActionTime(actionKey, action.Created, moveThrottle) {
 		return
 	}
-	position := positioner.Position()
+	position := entity.Position()
 	pos := action.Position
 	if d := position.Distance(pos); d > maxMove {
 		pos.Y /= d
 		pos.X /= d
 	}
-	positioner.Set(pos)
+	entity.Set(pos)
 	// Inform the client that the entity moved.
 	change := MoveChange{
 		Entity:   entity,

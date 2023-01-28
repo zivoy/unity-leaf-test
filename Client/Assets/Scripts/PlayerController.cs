@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
     public float m_Speed = 5f;
 
     public bool Controlled = false;
-
+//todo choose random colour on startup
     private Rigidbody _rigidbody;
     // Start is called before the first frame update
     void Start()
@@ -42,17 +42,17 @@ public class PlayerController : MonoBehaviour, NetworkedElement
 
     public void HandleUpdate(Entity entity)
     {
-        // if (entity.EntityCase != Entity.EntityOneofCase.Player) return;
-        var player = entity.Player;
         SetPosition(new Vector3
         {
-            x = player.Position.X,
-            z = player.Position.Y,
+            x = entity.Position.X,
+            z = entity.Position.Y,
         });
-        if (ColorUtility.TryParseHtmlString(player.Colour, out var playerColour))
+        var col = Color.red;
+        if (ColorUtility.TryParseHtmlString(entity.Colour, out var playerColour))
         {
-            GetComponentInChildren<MeshRenderer>().material.color = playerColour;
+            col = playerColour;
         }
+        GetComponentInChildren<MeshRenderer>().material.color = col;
     }
 
     public ElementType GetControlType()

@@ -3,20 +3,20 @@ package backend
 import "image/color"
 
 // Player contains information unique to local and remote players.
-type Player struct {
+type Entity struct {
 	IdentifierBase
-	Positioner
 	CurrentPosition Coordinate
 	Name            string
 	Colour          color.Color
+	Type            string
 }
 
 // Position determines the player position.
-func (p *Player) Position() Coordinate {
-	return p.CurrentPosition
+func (e *Entity) Position() Coordinate {
+	return e.CurrentPosition
 }
 
 // Set sets the position of the player.
-func (p *Player) Set(c Coordinate) {
-	p.CurrentPosition = c
+func (e *Entity) Set(c Coordinate) {
+	e.CurrentPosition = c
 }

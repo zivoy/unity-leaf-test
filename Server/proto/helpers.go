@@ -3,32 +3,17 @@ package proto
 import (
 	"exampleMulti/backend"
 	"fmt"
-	"log"
 )
 
-func GetProtoEntity(entity backend.Identifier) *Entity {
-	switch entity.(type) {
-	case *backend.Player:
-		player := entity.(*backend.Player)
-		protoPlayer := Entity_Player{
-			Player: GetProtoPlayer(player),
-		}
-		return &Entity{
-			Entity: &protoPlayer,
-			Id:     player.ID().String(),
-		}
-	}
-	log.Printf("cannot get proto entity for %T -> %+v", entity, entity)
-	return nil
-}
-
-func GetProtoPlayer(player *backend.Player) *Player {
-	r, g, b, _ := player.Colour.RGBA()
+func GetProtoEntity(entity *backend.Entity) *Entity {
+	r, g, b, _ := entity.Colour.RGBA()
 	col := fmt.Sprintf("#%02x%02x%02x", r&0xff, g&0xff, b&0xff)
-	return &Player{
-		Name:     player.Name,
-		Position: GetProtoCoordinate(player.Position()),
+	return &Entity{
+		Id:       entity.ID().String(),
+		Name:     entity.Name,
 		Colour:   col,
+		Position: GetProtoCoordinate(entity.Position()),
+		Type:     entity.Type,
 	}
 }
 

@@ -1,5 +1,4 @@
 syntax = "proto3";
-// import "google/protobuf/timestamp.proto";
 
 option go_package = "proto/";
 
@@ -21,6 +20,8 @@ message ConnectResponse {
 message Request {
   oneof action {
     Position move = 1;
+    AddEntity addEntity =2;
+    RemoveEntity removeEntity = 3;
   }
 }
 
@@ -37,17 +38,13 @@ message Position {
   float y = 2;
 }
 
-message Player {
-  string name = 2;
-  Position position = 3;
-  string colour = 4;
-}
-
 message Entity {
   string id = 1;
-  oneof entity {
-    Player player = 2;
-  }
+  string name = 2;
+  Position position = 3;
+  string type = 4;
+  string colour = 5;
+
 }
 message AddEntity {
   Entity entity = 1;

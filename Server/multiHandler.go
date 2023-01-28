@@ -8,7 +8,6 @@ import (
 	"image/color"
 	"log"
 	"math/rand"
-	"regexp"
 	"sync"
 	"time"
 
@@ -17,8 +16,8 @@ import (
 )
 
 const (
-	clientTimeout = 2 * time.Minute
-	maxClients    = 8
+	clientTimeout = 1 * time.Minute
+	maxClients    = 4
 )
 
 // client contains information about connected clients.
@@ -143,8 +142,7 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 		return nil, errors.New("the server is full")
 	}
 
-	re := regexp.MustCompile("^[a-zA-Z0-9 _-]+$")
-	if !re.MatchString(req.Name) {
+	if len(req.Name) > 16 {
 		return nil, errors.New("invalid name provided")
 	}
 	log.Println("Incoming connection from", req.Name)
@@ -162,8 +160,7 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	// make up an id for the user
 	id := uuid.New()
 
-	// Add the player.
-	player := &backend.Player{
+	player := &backend.Entity{
 		Name:            req.Name,
 		Colour:          colour,
 		IdentifierBase:  backend.IdentifierBase{UUID: id},

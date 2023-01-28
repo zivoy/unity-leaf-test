@@ -13,7 +13,7 @@ namespace Online
         public GameObject[] Spawnables;
         private Dictionary<string, GameObject> _spawnables;
 
-        //todo make server only convay position and object type
+        //todo make server handle register and unregister events
 
         public int updateFps = 60; // update at 60 fps
         private double _lastInterval;
@@ -36,7 +36,8 @@ namespace Online
                 if (other.gameObject == gameObject) continue;
                 return;
             }
-            
+
+            _spawnables = new Dictionary<string, GameObject>();
             foreach (var spawnable in Spawnables)
             {
                 if (_spawnables.ContainsKey(spawnable.name))
@@ -56,6 +57,10 @@ namespace Online
         }
 
         public void RegisterObject(NetworkedElement obj)
+        {
+            throw new NotImplementedException("make me");
+        }
+        public void UnregisterObject(NetworkedElement obj)
         {
             throw new NotImplementedException("make me");
         }
@@ -80,13 +85,6 @@ namespace Online
         }
 
         //todo implement the rest of player connection, make sure that there is a connection
-        // GameObject NewPlayer(Vector3 pos, Color color)
-        // {
-        // GameObject playable = Instantiate(player, pos, new Quaternion());
-        // playable.GetComponent<PlayerController>().Controlled = false;
-        // playable.GetComponentInChildren<MeshRenderer>().material.color = color;
-        // return playable;
-        // }
 
         // Update is called once per frame
         public void Update()
@@ -138,19 +136,8 @@ namespace Online
         private void AddEntity(Entity entity)
         {
             if (_objects.ContainsKey(entity.Id)) return;
-            // if (entity.EntityCase != Entity.EntityOneofCase.Player) return;
-            Debug.Log(_spawnables.Count); //todo entty type
-            var col = Color.red;
-            if (ColorUtility.TryParseHtmlString(entity.Player.Colour, out var playerColour))
-            {
-                col = playerColour;
-            }
-
-            // _objects[entity.Id] = NewPlayer(new Vector3
-            // {
-            //     x = entity.Player.Position.X,
-            //     z = entity.Player.Position.Y,
-            // }, col);
+            var o = Instantiate(_spawnables[entity.Type]);
+            o.GetComponent<NetworkedElement>().HandleUpdate(entity);
         }
 
         private void RemoveEntity(Entity entity)
