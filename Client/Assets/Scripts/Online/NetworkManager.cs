@@ -2,18 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Google.Protobuf.Collections;
 using Grpc.Core;
 using UnityEngine;
 using protoBuff;
 using Request = protoBuff.Request;
+
 //todo add try catches in places
-// todo implement list
+// todo change to calls and responses layout
 namespace Online
 {
     public class NetworkManager : MonoBehaviour
     {
-        private Game.GameClient _client;
-
         public GameObject[] spawnables;
         private Dictionary<string, GameObject> _spawnables;
 
@@ -21,17 +21,13 @@ namespace Online
 
         private readonly Dictionary<string, NetworkedElement> _objects;
         private readonly Dictionary<string, Vector2> _objectLastPos;
-        private AsyncDuplexStreamingCall<Request, Response> _stream;
 
-        private string _token;
-        private bool _active;
-        private readonly Queue<Request> _queue;
 
         public NetworkManager()
         {
-            _queue = new Queue<Request>();
             _objects = new Dictionary<string, NetworkedElement>();
             _objectLastPos = new Dictionary<string, Vector2>();
+            GRPC.RegisterMessageCallback(onMessage);
         }
 
         // Start is called before the first frame update
@@ -58,40 +54,16 @@ namespace Online
             }
 
             DontDestroyOnLoad(gameObject);
-            _client = new Game.GameClient(Connection.GetInstance().GetChannel());
 
             Connect();
         }
 
         /// be careful with this and dont have scripts register on wake since it can lead to recursion 
-        public void RegisterObject(GameObject obj, bool removeOnDisconnect = true)
+        public void RegisterObject(NetworkedElement obj)
         {
             var id = Guid.NewGuid().ToString();
-            var networkedElement = obj.GetComponent<NetworkedElement>();
-            var pos = obj.transform.position;
-            var req = new Request
-            {
-                AddEntity = new AddEntity
-                {
-                    KeepOnDisconnect = !removeOnDisconnect,
-                    Entity = new Entity
-                    {
-                        Id = id,
-                        Type = networkedElement.ID(),
-                        Name = obj.name,
-                        Colour = ColorUtility.ToHtmlStringRGBA(
-                            obj.GetComponentInChildren<MeshRenderer>().material.color),
-                        Position = new Position
-                        {
-                            X = pos.x,
-                            Y = pos.y
-                        }
-                    }
-                }
-            };
 
-            _objects.Add(id, networkedElement);
-            SendStreamRequest(req);
+            _objects.Add(id, obj);
         }
 
         public void UnregisterObject(NetworkedElement obj)
@@ -103,8 +75,13 @@ namespace Online
                 id = keyValuePair.Key;
                 break;
             }
-
-            // not having it be removed from the dict and destroyed here so it will be done in the broadcast request
+            UnregisterObject(id);
+        }
+        public void UnregisterObject(string id)
+        {
+            if (_objects.ContainsKey(id)) return;
+            _objects[id].Destroy();
+            _objects.Remove(id);
 
             var req = new Request
             {
@@ -113,15 +90,15 @@ namespace Online
                     Id = id
                 }
             };
-            SendStreamRequest(req);
+            GRPC.SendRequest(req);
         }
 
-        private void Connect()
+        public void Connect()
         {
-            ConnectResponse conn;
+            RepeatedField<Entity> entities;
             try
             {
-                conn = _client.Connect(new ConnectRequest { Session = "The Only One" });
+                entities = GRPC.Connect("The Only One");
             }
             catch (RpcException e)
             {
@@ -129,20 +106,16 @@ namespace Online
                 return;
             }
 
-            Debug.Log(conn);
-            _token = conn.Token;
+            Debug.Log(entities);
 
-            foreach (var entity in conn.Entities)
+            foreach (var entity in entities)
             {
                 AddEntity(entity);
             }
 
             try
             {
-                _stream = _client.Stream(new Metadata
-                {
-                    new("authorization", _token)
-                });
+                GRPC.StartStream();
             }
             catch (RpcException e)
             {
@@ -150,63 +123,55 @@ namespace Online
                 return;
             }
 
-            Task.Run(ReadStreamData);
-            StartCoroutine(SendRequests());
+            PostRegistrars();
+
             StartCoroutine(UpdatePosition());
-            _active = true;
         }
 
         //todo implement the rest of player connection, make sure that there is a connection / detext disconnect, work out the dispose as well, its not leaving session
 
-        private async void ReadStreamData()
+        private void onMessage(Response action)
         {
-            // while (!await _stream.ResponseStream.MoveNext()) continue;
-            try
+            Debug.Log(action);
+            switch (action.ActionCase)
             {
-                while (await _stream.ResponseStream.MoveNext())
-                {
-                    var action = _stream.ResponseStream.Current;
+                case Response.ActionOneofCase.AddEntity:
+                    AddEntity(action.AddEntity.Entity);
+                    break;
+                case Response.ActionOneofCase.RemoveEntity:
+                    RemoveEntity(action.AddEntity.Entity);
+                    break;
+                case Response.ActionOneofCase.UpdateEntity:
+                    UpdateEntity(action.UpdateEntity.Entity);
+                    break;
+                case Response.ActionOneofCase.MoveEntity:
+                    MoveEntity(action.MoveEntity);
+                    break;
+                default:
+                    break;
+            }
+        }
 
-                    Debug.Log(action);
-                    switch (action.ActionCase)
-                    {
-                        case Response.ActionOneofCase.AddEntity:
-                            AddEntity(action.AddEntity.Entity);
-                            break;
-                        case Response.ActionOneofCase.RemoveEntity:
-                            RemoveEntity(action.AddEntity.Entity);
-                            break;
-                        case Response.ActionOneofCase.UpdateEntity:
-                            UpdateEntity(action.UpdateEntity.Entity);
-                            break;
-                        case Response.ActionOneofCase.None:
-                        default:
-                            break;
-                    }
-                }
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
-            {
-                Debug.Log("Stream cancelled");
-            }
+        private bool isControlled(string id)
+        {
+            return _objects.ContainsKey(id) && _objects[id].GetControlType() == ElementType.Owner;
         }
 
         private void AddEntity(Entity entity)
         {
             if (_objects.ContainsKey(entity.Id)) return;
-            var o = Instantiate(_spawnables[entity.Type], new Vector3
+            var factory = new GameObject().AddComponent<Factory>();
+            var script = factory.SpawnElement(entity, _spawnables[entity.Type], new Vector3
             {
                 x = entity.Position.X,
                 z = entity.Position.Y
-            }, new Quaternion());
-            var script = o.GetComponent<NetworkedElement>();
-            script.HandleUpdate(entity);
+            });
             _objects[entity.Id] = script;
         }
 
         private void RemoveEntity(Entity entity)
         {
-            if (!_objects.ContainsKey(entity.Id)) return;
+            if (isControlled(entity.Id)) return;
             var obj = _objects[entity.Id];
             _objects.Remove(entity.Id);
             obj.Destroy();
@@ -214,11 +179,20 @@ namespace Online
 
         private void UpdateEntity(Entity entity)
         {
-            if (!_objects.ContainsKey(entity.Id)) return;
+            if (isControlled(entity.Id)) return;
             var obj = _objects[entity.Id];
             obj.HandleUpdate(entity);
         }
-        
+
+        private void MoveEntity(MoveEntity moveAction)
+        {
+            if (isControlled(moveAction.Id)) return;
+            _objects[moveAction.Id].HandleUpdate(new Entity
+            {
+                Position = moveAction.Position,
+            });
+        }
+
         private void OnDestroy()
         {
             Disconnect();
@@ -228,37 +202,55 @@ namespace Online
         {
             Disconnect();
         }
-        
-        private async void Disconnect()
+
+        public async void Disconnect()
         {
-            if (!_active) return;
-            _active = false;
             StopAllCoroutines();
-            Debug.Log("shutting down stream");
-            await Task.Delay((int)(1000f / updateFps)+1);
-            if (_stream != null)
-                await _stream.RequestStream.CompleteAsync();
-            Connection.GetInstance().Dispose();
+            await Task.Delay((int)(1000f / updateFps) + 10);
+            GRPC.Disconnect();
         }
 
-        private void SendStreamRequest(Request req)
+        private Position ToPosition(Vector2 position)
         {
-            _queue.Enqueue(req);
-        }
-        
-        
-        IEnumerator SendRequests()
-        {
-            while (true)//_queue.Count > 0)
+            return new Position
             {
-                if (_active && _queue.Count > 0)
-                    _stream.RequestStream.WriteAsync(_queue.Dequeue()).Wait();
+                X = position.x,
+                Y = position.y
+            };
+        }
+        private Position ToPosition(Vector3 position)
+        {
+            return new Position
+            {
+                X = position.x,
+                Y = position.z
+            };
+        }
 
-                yield return null;
+        private void PostRegistrars()
+        {
+            foreach (var (id, obj) in _objects)
+            {
+                var req = new Request
+                {
+                    AddEntity = new AddEntity
+                    {
+                        KeepOnDisconnect = !obj.RemoveOnDisconnect(),
+                        Entity = new Entity
+                        {
+                            Id = id,
+                            Type = obj.ID(),
+                            Name = obj.Name(),
+                            Colour = obj.Colour(),
+                            Position = ToPosition(obj.GetPosition())
+                        }
+                    }
+                };
+                GRPC.SendRequest(req);
             }
         }
-        
-        IEnumerator UpdatePosition()
+
+            IEnumerator UpdatePosition()
         {
             while (true)
             {
@@ -274,17 +266,13 @@ namespace Online
 
                     var req = new Request
                     {
-                        Move = new MoveAction
+                        MoveEntity = new MoveEntity
                         {
                             Id = keyValuePair.Key,
-                            Position = new Position
-                            {
-                                X = pos.x,
-                                Y = pos.y
-                            }
+                            Position = ToPosition(pos)
                         }
                     };
-                    _queue.Enqueue(req);
+                    GRPC.SendRequest(req);
                 }
 
                 yield return new WaitForSeconds(1f / updateFps);

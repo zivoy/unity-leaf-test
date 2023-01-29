@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	pb "exampleMulti/proto"
 	"flag"
 	"fmt"
 	"log"
 	"math/rand"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"google.golang.org/grpc"
@@ -33,8 +37,24 @@ func main() {
 	s := grpc.NewServer()
 	pb.RegisterGameServer(s, server)
 
-	log.Println("Starting server")
-	if err = s.Serve(lis); err != nil {
-		log.Fatalln("Failed to start the server:", err)
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		log.Println("Starting server")
+		if err = s.Serve(lis); err != nil {
+			log.Fatalln("Failed to start the server:", err)
+		}
+		cancel()
+	}()
+
+	select {
+	case <-signalChan:
+	case <-ctx.Done():
 	}
+	server.Stop()
+	log.Println("Shutting down")
+	time.Sleep(500 * time.Millisecond)
 }

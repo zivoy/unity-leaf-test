@@ -3,6 +3,9 @@ package main
 //todo rewrite this
 // empty sersions get deleted
 // timeouts might be bugged
+// have server ping everyone to find disconnects
+// todo multiple sends in one
+
 import (
 	"context"
 	"errors"
@@ -17,7 +20,7 @@ import (
 )
 
 const (
-	clientTimeout = 15 * time.Minute
+	clientTimeout = 2 * time.Minute
 	maxClients    = 4
 )
 
@@ -52,6 +55,13 @@ func NewGameServer() *GameServer {
 	return server
 }
 
+func (s *GameServer) Stop() {
+	for id := range s.games {
+		log.Printf("Stopping \"%s\"\n", id)
+		s.removeSession(id)
+	}
+}
+
 func (s *GameServer) addClient(c *client) {
 	s.mu.Lock()
 	s.clients[c.id] = c
@@ -67,7 +77,11 @@ func (s *GameServer) removeClient(id backend.Token) {
 	session.RemoveClientsEntities(c.id)
 	s.mu.Lock()
 	delete(s.clients, id)
-	users := s.sessionUsers[session.GameId]
+	users, ok := s.sessionUsers[session.GameId]
+	if !ok {
+		s.mu.Unlock()
+		return
+	}
 	serverUsers := make([]backend.Token, len(users)-1, maxClients)
 	count := 0
 	for _, i := range users {
@@ -145,38 +159,29 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 	defer s.removeClient(currentClient.id)
 	// Wait for stream requests.
 	var doneError error
-	var req *pb.Request
 
-	for {
-		select {
-		case doneError = <-currentClient.done:
-			break
-		case <-ctx.Done():
-			doneError = ctx.Err()
-			break
-		default:
+	go func() {
+		var req *pb.Request
+		for {
 			req, err = srv.Recv()
+			if err == io.EOF {
+				currentClient.done <- nil
+				return
+			}
+			if err != nil {
+				log.Printf("receive error %v", err)
+				currentClient.done <- errors.New("failed to receive request")
+				return
+			}
+			//log.Printf("got message %+v", req)
+			currentClient.lastMessage = time.Now()
+			s.handleRequests(req, currentClient, game)
 		}
-		if err == io.EOF {
-			doneError = nil
-			break
-		}
-		if err != nil {
-			log.Printf("receive error %v", err)
-			doneError = errors.New("failed to receive request")
-			break
-		}
-		//log.Printf("got message %+v", req)
-		currentClient.lastMessage = time.Now()
-
-		switch req.GetAction().(type) {
-		case *pb.Request_Move:
-			s.handleMoveRequest(game, req.GetMove())
-		case *pb.Request_AddEntity:
-			s.handleAddRequest(game, req.GetAddEntity(), currentClient.id)
-		case *pb.Request_RemoveEntity:
-			s.handleRemoveRequest(game, req.GetRemoveEntity())
-		}
+	}()
+	select {
+	case doneError = <-currentClient.done:
+	case <-ctx.Done():
+		doneError = ctx.Err()
 	}
 
 	if doneError != nil {
@@ -219,7 +224,7 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	token := backend.NewToken()
 	s.addClient(&client{
 		id:          token,
-		done:        make(chan error),
+		done:        make(chan error, 1),
 		lastMessage: time.Now(),
 		session:     game,
 	})
@@ -245,59 +250,13 @@ func (s *GameServer) watchTimeout() {
 	}()
 }
 
-func (s *GameServer) watchChanges() {
-	go func() {
-		for {
-			change := <-s.ChangeChannel
-			switch c := change.(type) {
-			case *backend.UpdateEntityChange:
-				s.handleUpdateChange(*c)
-			case *backend.RemoveEntityChange:
-				s.handleRemoveChange(*c)
-			case *backend.AddEntityChange:
-				s.handleAddChange(*c)
-			default:
-				log.Println("unknown type", c)
-			}
-		}
-	}()
-}
-
-func (s *GameServer) handleMoveRequest(game *backend.Game, req *pb.MoveAction) {
-	id, ok := ParseUUID(req.GetId())
-	if !ok {
-		log.Println("can't parse id to move")
-		return
-	}
-	game.MoveEntity(id, backend.CoordinateFromProto(req.GetPosition()))
-}
-
-func (s *GameServer) handleRemoveRequest(game *backend.Game, req *pb.RemoveEntity) {
-	id, ok := ParseUUID(req.GetId())
-	if !ok {
-		log.Println("can't parse id to remove")
-		return
-	}
-	game.RemoveEntity(id)
-}
-
-func (s *GameServer) handleAddRequest(game *backend.Game, req *pb.AddEntity, clientId backend.Token) {
-	ent, err := backend.EntityFromProto(req.GetEntity())
-	if err != nil {
-		log.Println("can't parse entity to add")
-		return
-	}
-
-	game.AddEntity(ent, clientId, !req.GetKeepOnDisconnect())
-}
-
 func (s *GameServer) broadcast(session string, resp *pb.Response) {
 	s.mu.Lock()
 	for id, currentClient := range s.clients {
 		if currentClient.streamServer == nil {
 			continue
 		}
-		if currentClient.session.GameId != session {
+		if session != "" && currentClient.session.GameId != session {
 			continue
 		}
 		if err := currentClient.streamServer.Send(resp); err != nil {
@@ -308,37 +267,4 @@ func (s *GameServer) broadcast(session string, resp *pb.Response) {
 		//log.Printf("%s - broadcasted %+v", resp, id)
 	}
 	s.mu.Unlock()
-}
-
-func (s *GameServer) handleUpdateChange(change backend.UpdateEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_UpdateEntity{
-			UpdateEntity: &pb.UpdateEntity{
-				Entity: change.Entity.ToProto(),
-			},
-		},
-	}
-	s.broadcast(change.GameID(), &resp)
-}
-
-func (s *GameServer) handleRemoveChange(change backend.RemoveEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_RemoveEntity{
-			RemoveEntity: &pb.RemoveEntity{
-				Id: change.EntityID().String(),
-			},
-		},
-	}
-	s.broadcast(change.GameID(), &resp)
-}
-
-func (s *GameServer) handleAddChange(change backend.AddEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_AddEntity{
-			AddEntity: &pb.AddEntity{
-				Entity: change.Entity.ToProto(),
-			},
-		},
-	}
-	s.broadcast(change.GameID(), &resp)
 }

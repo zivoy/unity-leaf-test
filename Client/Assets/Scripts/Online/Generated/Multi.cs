@@ -29,23 +29,25 @@ namespace protoBuff {
             "AmlkGAEgASgJEg4KBm9ubGluZRgCIAEoDRILCgNtYXgYAyABKA0iIQoOQ29u",
             "bmVjdFJlcXVlc3QSDwoHc2Vzc2lvbhgBIAEoCSI7Cg9Db25uZWN0UmVzcG9u",
             "c2USDQoFdG9rZW4YAiABKAkSGQoIZW50aXRpZXMYAyADKAsyBy5FbnRpdHki",
-            "eAoHUmVxdWVzdBIbCgRtb3ZlGAEgASgLMgsuTW92ZUFjdGlvbkgAEh8KCWFk",
-            "ZEVudGl0eRgCIAEoCzIKLkFkZEVudGl0eUgAEiUKDHJlbW92ZUVudGl0eRgD",
-            "IAEoCzINLlJlbW92ZUVudGl0eUgAQggKBmFjdGlvbiI1CgpNb3ZlQWN0aW9u",
-            "EgoKAmlkGAEgASgJEhsKCHBvc2l0aW9uGAIgASgLMgkuUG9zaXRpb24igwEK",
-            "CFJlc3BvbnNlEh8KCWFkZEVudGl0eRgBIAEoCzIKLkFkZEVudGl0eUgAEiUK",
-            "DHVwZGF0ZUVudGl0eRgCIAEoCzINLlVwZGF0ZUVudGl0eUgAEiUKDHJlbW92",
-            "ZUVudGl0eRgDIAEoCzINLlJlbW92ZUVudGl0eUgAQggKBmFjdGlvbiIgCghQ",
-            "b3NpdGlvbhIJCgF4GAIgASgCEgkKAXkYAyABKAIiXQoGRW50aXR5EgoKAmlk",
-            "GAEgASgJEgwKBG5hbWUYAiABKAkSGwoIcG9zaXRpb24YAyABKAsyCS5Qb3Np",
-            "dGlvbhIMCgR0eXBlGAQgASgJEg4KBmNvbG91chgFIAEoCSJYCglBZGRFbnRp",
-            "dHkSFwoGZW50aXR5GAEgASgLMgcuRW50aXR5Eh0KEGtlZXBPbkRpc2Nvbm5l",
-            "Y3QYAiABKAhIAIgBAUITChFfa2VlcE9uRGlzY29ubmVjdCInCgxVcGRhdGVF",
-            "bnRpdHkSFwoGZW50aXR5GAEgASgLMgcuRW50aXR5IhoKDFJlbW92ZUVudGl0",
-            "eRIKCgJpZBgBIAEoCTKEAQoER2FtZRInCgRMaXN0Eg8uU2Vzc2lvblJlcXVl",
-            "c3QaDC5TZXNzaW9uTGlzdCIAEi4KB0Nvbm5lY3QSDy5Db25uZWN0UmVxdWVz",
-            "dBoQLkNvbm5lY3RSZXNwb25zZSIAEiMKBlN0cmVhbRIILlJlcXVlc3QaCS5S",
-            "ZXNwb25zZSIAKAEwAUIUWgZwcm90by+qAglwcm90b0J1ZmZiBnByb3RvMw=="));
+            "pQEKB1JlcXVlc3QSIQoKbW92ZUVudGl0eRgBIAEoCzILLk1vdmVFbnRpdHlI",
+            "ABIfCglhZGRFbnRpdHkYAiABKAsyCi5BZGRFbnRpdHlIABIlCgxyZW1vdmVF",
+            "bnRpdHkYAyABKAsyDS5SZW1vdmVFbnRpdHlIABIlCgx1cGRhdGVFbnRpdHkY",
+            "BCABKAsyDS5VcGRhdGVFbnRpdHlIAEIICgZhY3Rpb24ipgEKCFJlc3BvbnNl",
+            "Eh8KCWFkZEVudGl0eRgBIAEoCzIKLkFkZEVudGl0eUgAEiUKDHVwZGF0ZUVu",
+            "dGl0eRgCIAEoCzINLlVwZGF0ZUVudGl0eUgAEiUKDHJlbW92ZUVudGl0eRgD",
+            "IAEoCzINLlJlbW92ZUVudGl0eUgAEiEKCm1vdmVFbnRpdHkYBCABKAsyCy5N",
+            "b3ZlRW50aXR5SABCCAoGYWN0aW9uIiAKCFBvc2l0aW9uEgkKAXgYAiABKAIS",
+            "CQoBeRgDIAEoAiJdCgZFbnRpdHkSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEo",
+            "CRIbCghwb3NpdGlvbhgDIAEoCzIJLlBvc2l0aW9uEgwKBHR5cGUYBCABKAkS",
+            "DgoGY29sb3VyGAUgASgJIlgKCUFkZEVudGl0eRIXCgZlbnRpdHkYASABKAsy",
+            "By5FbnRpdHkSHQoQa2VlcE9uRGlzY29ubmVjdBgCIAEoCEgAiAEBQhMKEV9r",
+            "ZWVwT25EaXNjb25uZWN0IicKDFVwZGF0ZUVudGl0eRIXCgZlbnRpdHkYASAB",
+            "KAsyBy5FbnRpdHkiGgoMUmVtb3ZlRW50aXR5EgoKAmlkGAEgASgJIjUKCk1v",
+            "dmVFbnRpdHkSCgoCaWQYASABKAkSGwoIcG9zaXRpb24YAiABKAsyCS5Qb3Np",
+            "dGlvbjKEAQoER2FtZRInCgRMaXN0Eg8uU2Vzc2lvblJlcXVlc3QaDC5TZXNz",
+            "aW9uTGlzdCIAEi4KB0Nvbm5lY3QSDy5Db25uZWN0UmVxdWVzdBoQLkNvbm5l",
+            "Y3RSZXNwb25zZSIAEiMKBlN0cmVhbRIILlJlcXVlc3QaCS5SZXNwb25zZSIA",
+            "KAEwAUIUWgZwcm90by+qAglwcm90b0J1ZmZiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -54,14 +56,14 @@ namespace protoBuff {
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Server), global::protoBuff.Server.Parser, new[]{ "Id", "Online", "Max" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.ConnectRequest), global::protoBuff.ConnectRequest.Parser, new[]{ "Session" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.ConnectResponse), global::protoBuff.ConnectResponse.Parser, new[]{ "Token", "Entities" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Request), global::protoBuff.Request.Parser, new[]{ "Move", "AddEntity", "RemoveEntity" }, new[]{ "Action" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.MoveAction), global::protoBuff.MoveAction.Parser, new[]{ "Id", "Position" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Response), global::protoBuff.Response.Parser, new[]{ "AddEntity", "UpdateEntity", "RemoveEntity" }, new[]{ "Action" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Request), global::protoBuff.Request.Parser, new[]{ "MoveEntity", "AddEntity", "RemoveEntity", "UpdateEntity" }, new[]{ "Action" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Response), global::protoBuff.Response.Parser, new[]{ "AddEntity", "UpdateEntity", "RemoveEntity", "MoveEntity" }, new[]{ "Action" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Position), global::protoBuff.Position.Parser, new[]{ "X", "Y" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Entity), global::protoBuff.Entity.Parser, new[]{ "Id", "Name", "Position", "Type", "Colour" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.AddEntity), global::protoBuff.AddEntity.Parser, new[]{ "Entity", "KeepOnDisconnect" }, new[]{ "KeepOnDisconnect" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.UpdateEntity), global::protoBuff.UpdateEntity.Parser, new[]{ "Entity" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.RemoveEntity), global::protoBuff.RemoveEntity.Parser, new[]{ "Id" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.RemoveEntity), global::protoBuff.RemoveEntity.Parser, new[]{ "Id" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.MoveEntity), global::protoBuff.MoveEntity.Parser, new[]{ "Id", "Position" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1100,14 +1102,17 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Request(Request other) : this() {
       switch (other.ActionCase) {
-        case ActionOneofCase.Move:
-          Move = other.Move.Clone();
+        case ActionOneofCase.MoveEntity:
+          MoveEntity = other.MoveEntity.Clone();
           break;
         case ActionOneofCase.AddEntity:
           AddEntity = other.AddEntity.Clone();
           break;
         case ActionOneofCase.RemoveEntity:
           RemoveEntity = other.RemoveEntity.Clone();
+          break;
+        case ActionOneofCase.UpdateEntity:
+          UpdateEntity = other.UpdateEntity.Clone();
           break;
       }
 
@@ -1120,15 +1125,15 @@ namespace protoBuff {
       return new Request(this);
     }
 
-    /// <summary>Field number for the "move" field.</summary>
-    public const int MoveFieldNumber = 1;
+    /// <summary>Field number for the "moveEntity" field.</summary>
+    public const int MoveEntityFieldNumber = 1;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::protoBuff.MoveAction Move {
-      get { return actionCase_ == ActionOneofCase.Move ? (global::protoBuff.MoveAction) action_ : null; }
+    public global::protoBuff.MoveEntity MoveEntity {
+      get { return actionCase_ == ActionOneofCase.MoveEntity ? (global::protoBuff.MoveEntity) action_ : null; }
       set {
         action_ = value;
-        actionCase_ = value == null ? ActionOneofCase.None : ActionOneofCase.Move;
+        actionCase_ = value == null ? ActionOneofCase.None : ActionOneofCase.MoveEntity;
       }
     }
 
@@ -1156,13 +1161,26 @@ namespace protoBuff {
       }
     }
 
+    /// <summary>Field number for the "updateEntity" field.</summary>
+    public const int UpdateEntityFieldNumber = 4;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::protoBuff.UpdateEntity UpdateEntity {
+      get { return actionCase_ == ActionOneofCase.UpdateEntity ? (global::protoBuff.UpdateEntity) action_ : null; }
+      set {
+        action_ = value;
+        actionCase_ = value == null ? ActionOneofCase.None : ActionOneofCase.UpdateEntity;
+      }
+    }
+
     private object action_;
     /// <summary>Enum of possible cases for the "action" oneof.</summary>
     public enum ActionOneofCase {
       None = 0,
-      Move = 1,
+      MoveEntity = 1,
       AddEntity = 2,
       RemoveEntity = 3,
+      UpdateEntity = 4,
     }
     private ActionOneofCase actionCase_ = ActionOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1193,9 +1211,10 @@ namespace protoBuff {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Move, other.Move)) return false;
+      if (!object.Equals(MoveEntity, other.MoveEntity)) return false;
       if (!object.Equals(AddEntity, other.AddEntity)) return false;
       if (!object.Equals(RemoveEntity, other.RemoveEntity)) return false;
+      if (!object.Equals(UpdateEntity, other.UpdateEntity)) return false;
       if (ActionCase != other.ActionCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1204,9 +1223,10 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (actionCase_ == ActionOneofCase.Move) hash ^= Move.GetHashCode();
+      if (actionCase_ == ActionOneofCase.MoveEntity) hash ^= MoveEntity.GetHashCode();
       if (actionCase_ == ActionOneofCase.AddEntity) hash ^= AddEntity.GetHashCode();
       if (actionCase_ == ActionOneofCase.RemoveEntity) hash ^= RemoveEntity.GetHashCode();
+      if (actionCase_ == ActionOneofCase.UpdateEntity) hash ^= UpdateEntity.GetHashCode();
       hash ^= (int) actionCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1226,9 +1246,9 @@ namespace protoBuff {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (actionCase_ == ActionOneofCase.Move) {
+      if (actionCase_ == ActionOneofCase.MoveEntity) {
         output.WriteRawTag(10);
-        output.WriteMessage(Move);
+        output.WriteMessage(MoveEntity);
       }
       if (actionCase_ == ActionOneofCase.AddEntity) {
         output.WriteRawTag(18);
@@ -1237,6 +1257,10 @@ namespace protoBuff {
       if (actionCase_ == ActionOneofCase.RemoveEntity) {
         output.WriteRawTag(26);
         output.WriteMessage(RemoveEntity);
+      }
+      if (actionCase_ == ActionOneofCase.UpdateEntity) {
+        output.WriteRawTag(34);
+        output.WriteMessage(UpdateEntity);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1248,9 +1272,9 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (actionCase_ == ActionOneofCase.Move) {
+      if (actionCase_ == ActionOneofCase.MoveEntity) {
         output.WriteRawTag(10);
-        output.WriteMessage(Move);
+        output.WriteMessage(MoveEntity);
       }
       if (actionCase_ == ActionOneofCase.AddEntity) {
         output.WriteRawTag(18);
@@ -1259,6 +1283,10 @@ namespace protoBuff {
       if (actionCase_ == ActionOneofCase.RemoveEntity) {
         output.WriteRawTag(26);
         output.WriteMessage(RemoveEntity);
+      }
+      if (actionCase_ == ActionOneofCase.UpdateEntity) {
+        output.WriteRawTag(34);
+        output.WriteMessage(UpdateEntity);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1270,14 +1298,17 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (actionCase_ == ActionOneofCase.Move) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Move);
+      if (actionCase_ == ActionOneofCase.MoveEntity) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MoveEntity);
       }
       if (actionCase_ == ActionOneofCase.AddEntity) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(AddEntity);
       }
       if (actionCase_ == ActionOneofCase.RemoveEntity) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RemoveEntity);
+      }
+      if (actionCase_ == ActionOneofCase.UpdateEntity) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(UpdateEntity);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1292,11 +1323,11 @@ namespace protoBuff {
         return;
       }
       switch (other.ActionCase) {
-        case ActionOneofCase.Move:
-          if (Move == null) {
-            Move = new global::protoBuff.MoveAction();
+        case ActionOneofCase.MoveEntity:
+          if (MoveEntity == null) {
+            MoveEntity = new global::protoBuff.MoveEntity();
           }
-          Move.MergeFrom(other.Move);
+          MoveEntity.MergeFrom(other.MoveEntity);
           break;
         case ActionOneofCase.AddEntity:
           if (AddEntity == null) {
@@ -1310,6 +1341,12 @@ namespace protoBuff {
           }
           RemoveEntity.MergeFrom(other.RemoveEntity);
           break;
+        case ActionOneofCase.UpdateEntity:
+          if (UpdateEntity == null) {
+            UpdateEntity = new global::protoBuff.UpdateEntity();
+          }
+          UpdateEntity.MergeFrom(other.UpdateEntity);
+          break;
       }
 
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -1328,12 +1365,12 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            global::protoBuff.MoveAction subBuilder = new global::protoBuff.MoveAction();
-            if (actionCase_ == ActionOneofCase.Move) {
-              subBuilder.MergeFrom(Move);
+            global::protoBuff.MoveEntity subBuilder = new global::protoBuff.MoveEntity();
+            if (actionCase_ == ActionOneofCase.MoveEntity) {
+              subBuilder.MergeFrom(MoveEntity);
             }
             input.ReadMessage(subBuilder);
-            Move = subBuilder;
+            MoveEntity = subBuilder;
             break;
           }
           case 18: {
@@ -1354,6 +1391,15 @@ namespace protoBuff {
             RemoveEntity = subBuilder;
             break;
           }
+          case 34: {
+            global::protoBuff.UpdateEntity subBuilder = new global::protoBuff.UpdateEntity();
+            if (actionCase_ == ActionOneofCase.UpdateEntity) {
+              subBuilder.MergeFrom(UpdateEntity);
+            }
+            input.ReadMessage(subBuilder);
+            UpdateEntity = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -1370,12 +1416,12 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            global::protoBuff.MoveAction subBuilder = new global::protoBuff.MoveAction();
-            if (actionCase_ == ActionOneofCase.Move) {
-              subBuilder.MergeFrom(Move);
+            global::protoBuff.MoveEntity subBuilder = new global::protoBuff.MoveEntity();
+            if (actionCase_ == ActionOneofCase.MoveEntity) {
+              subBuilder.MergeFrom(MoveEntity);
             }
             input.ReadMessage(subBuilder);
-            Move = subBuilder;
+            MoveEntity = subBuilder;
             break;
           }
           case 18: {
@@ -1396,239 +1442,13 @@ namespace protoBuff {
             RemoveEntity = subBuilder;
             break;
           }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  public sealed partial class MoveAction : pb::IMessage<MoveAction>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<MoveAction> _parser = new pb::MessageParser<MoveAction>(() => new MoveAction());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<MoveAction> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[6]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MoveAction() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MoveAction(MoveAction other) : this() {
-      id_ = other.id_;
-      position_ = other.position_ != null ? other.position_.Clone() : null;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MoveAction Clone() {
-      return new MoveAction(this);
-    }
-
-    /// <summary>Field number for the "id" field.</summary>
-    public const int IdFieldNumber = 1;
-    private string id_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Id {
-      get { return id_; }
-      set {
-        id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "position" field.</summary>
-    public const int PositionFieldNumber = 2;
-    private global::protoBuff.Position position_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::protoBuff.Position Position {
-      get { return position_; }
-      set {
-        position_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as MoveAction);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(MoveAction other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Id != other.Id) return false;
-      if (!object.Equals(Position, other.Position)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Id.Length != 0) hash ^= Id.GetHashCode();
-      if (position_ != null) hash ^= Position.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (Id.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Id);
-      }
-      if (position_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(Position);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Id.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(Id);
-      }
-      if (position_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(Position);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (Id.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
-      }
-      if (position_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(MoveAction other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Id.Length != 0) {
-        Id = other.Id;
-      }
-      if (other.position_ != null) {
-        if (position_ == null) {
-          Position = new global::protoBuff.Position();
-        }
-        Position.MergeFrom(other.Position);
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            Id = input.ReadString();
-            break;
-          }
-          case 18: {
-            if (position_ == null) {
-              Position = new global::protoBuff.Position();
+          case 34: {
+            global::protoBuff.UpdateEntity subBuilder = new global::protoBuff.UpdateEntity();
+            if (actionCase_ == ActionOneofCase.UpdateEntity) {
+              subBuilder.MergeFrom(UpdateEntity);
             }
-            input.ReadMessage(Position);
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            Id = input.ReadString();
-            break;
-          }
-          case 18: {
-            if (position_ == null) {
-              Position = new global::protoBuff.Position();
-            }
-            input.ReadMessage(Position);
+            input.ReadMessage(subBuilder);
+            UpdateEntity = subBuilder;
             break;
           }
         }
@@ -1652,7 +1472,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[7]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[6]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1681,6 +1501,9 @@ namespace protoBuff {
           break;
         case ActionOneofCase.RemoveEntity:
           RemoveEntity = other.RemoveEntity.Clone();
+          break;
+        case ActionOneofCase.MoveEntity:
+          MoveEntity = other.MoveEntity.Clone();
           break;
       }
 
@@ -1729,6 +1552,18 @@ namespace protoBuff {
       }
     }
 
+    /// <summary>Field number for the "moveEntity" field.</summary>
+    public const int MoveEntityFieldNumber = 4;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::protoBuff.MoveEntity MoveEntity {
+      get { return actionCase_ == ActionOneofCase.MoveEntity ? (global::protoBuff.MoveEntity) action_ : null; }
+      set {
+        action_ = value;
+        actionCase_ = value == null ? ActionOneofCase.None : ActionOneofCase.MoveEntity;
+      }
+    }
+
     private object action_;
     /// <summary>Enum of possible cases for the "action" oneof.</summary>
     public enum ActionOneofCase {
@@ -1736,6 +1571,7 @@ namespace protoBuff {
       AddEntity = 1,
       UpdateEntity = 2,
       RemoveEntity = 3,
+      MoveEntity = 4,
     }
     private ActionOneofCase actionCase_ = ActionOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1769,6 +1605,7 @@ namespace protoBuff {
       if (!object.Equals(AddEntity, other.AddEntity)) return false;
       if (!object.Equals(UpdateEntity, other.UpdateEntity)) return false;
       if (!object.Equals(RemoveEntity, other.RemoveEntity)) return false;
+      if (!object.Equals(MoveEntity, other.MoveEntity)) return false;
       if (ActionCase != other.ActionCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1780,6 +1617,7 @@ namespace protoBuff {
       if (actionCase_ == ActionOneofCase.AddEntity) hash ^= AddEntity.GetHashCode();
       if (actionCase_ == ActionOneofCase.UpdateEntity) hash ^= UpdateEntity.GetHashCode();
       if (actionCase_ == ActionOneofCase.RemoveEntity) hash ^= RemoveEntity.GetHashCode();
+      if (actionCase_ == ActionOneofCase.MoveEntity) hash ^= MoveEntity.GetHashCode();
       hash ^= (int) actionCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1811,6 +1649,10 @@ namespace protoBuff {
         output.WriteRawTag(26);
         output.WriteMessage(RemoveEntity);
       }
+      if (actionCase_ == ActionOneofCase.MoveEntity) {
+        output.WriteRawTag(34);
+        output.WriteMessage(MoveEntity);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1833,6 +1675,10 @@ namespace protoBuff {
         output.WriteRawTag(26);
         output.WriteMessage(RemoveEntity);
       }
+      if (actionCase_ == ActionOneofCase.MoveEntity) {
+        output.WriteRawTag(34);
+        output.WriteMessage(MoveEntity);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1851,6 +1697,9 @@ namespace protoBuff {
       }
       if (actionCase_ == ActionOneofCase.RemoveEntity) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(RemoveEntity);
+      }
+      if (actionCase_ == ActionOneofCase.MoveEntity) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MoveEntity);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1882,6 +1731,12 @@ namespace protoBuff {
             RemoveEntity = new global::protoBuff.RemoveEntity();
           }
           RemoveEntity.MergeFrom(other.RemoveEntity);
+          break;
+        case ActionOneofCase.MoveEntity:
+          if (MoveEntity == null) {
+            MoveEntity = new global::protoBuff.MoveEntity();
+          }
+          MoveEntity.MergeFrom(other.MoveEntity);
           break;
       }
 
@@ -1927,6 +1782,15 @@ namespace protoBuff {
             RemoveEntity = subBuilder;
             break;
           }
+          case 34: {
+            global::protoBuff.MoveEntity subBuilder = new global::protoBuff.MoveEntity();
+            if (actionCase_ == ActionOneofCase.MoveEntity) {
+              subBuilder.MergeFrom(MoveEntity);
+            }
+            input.ReadMessage(subBuilder);
+            MoveEntity = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -1969,6 +1833,15 @@ namespace protoBuff {
             RemoveEntity = subBuilder;
             break;
           }
+          case 34: {
+            global::protoBuff.MoveEntity subBuilder = new global::protoBuff.MoveEntity();
+            if (actionCase_ == ActionOneofCase.MoveEntity) {
+              subBuilder.MergeFrom(MoveEntity);
+            }
+            input.ReadMessage(subBuilder);
+            MoveEntity = subBuilder;
+            break;
+          }
         }
       }
     }
@@ -1990,7 +1863,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[8]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2216,7 +2089,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[9]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[8]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2563,7 +2436,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[10]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2812,7 +2685,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[11]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3010,7 +2883,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[12]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3176,6 +3049,241 @@ namespace protoBuff {
             break;
           case 10: {
             Id = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class MoveEntity : pb::IMessage<MoveEntity>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<MoveEntity> _parser = new pb::MessageParser<MoveEntity>(() => new MoveEntity());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<MoveEntity> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[12]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public MoveEntity() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public MoveEntity(MoveEntity other) : this() {
+      id_ = other.id_;
+      position_ = other.position_ != null ? other.position_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public MoveEntity Clone() {
+      return new MoveEntity(this);
+    }
+
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private string id_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Id {
+      get { return id_; }
+      set {
+        id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "position" field.</summary>
+    public const int PositionFieldNumber = 2;
+    private global::protoBuff.Position position_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::protoBuff.Position Position {
+      get { return position_; }
+      set {
+        position_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as MoveEntity);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(MoveEntity other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Id != other.Id) return false;
+      if (!object.Equals(Position, other.Position)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Id.Length != 0) hash ^= Id.GetHashCode();
+      if (position_ != null) hash ^= Position.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Id.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Id);
+      }
+      if (position_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Position);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Id);
+      }
+      if (position_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Position);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Id.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+      }
+      if (position_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(MoveEntity other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Id.Length != 0) {
+        Id = other.Id;
+      }
+      if (other.position_ != null) {
+        if (position_ == null) {
+          Position = new global::protoBuff.Position();
+        }
+        Position.MergeFrom(other.Position);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Id = input.ReadString();
+            break;
+          }
+          case 18: {
+            if (position_ == null) {
+              Position = new global::protoBuff.Position();
+            }
+            input.ReadMessage(Position);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Id = input.ReadString();
+            break;
+          }
+          case 18: {
+            if (position_ == null) {
+              Position = new global::protoBuff.Position();
+            }
+            input.ReadMessage(Position);
             break;
           }
         }

@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	ActionThrottle = time.Second / 80
-	maxMove        = 5
+	ActionThrottle = time.Second / 200
 )
 
 type Token uuid.UUID

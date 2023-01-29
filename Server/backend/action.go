@@ -64,17 +64,11 @@ func (m *MoveAction) Perform(game *Game) Change {
 		return nil
 	}
 
-	position := entity.Position()
 	pos := m.Position
-	if d := position.Distance(pos); d > maxMove {
-		dm := d / maxMove
-		pos.Y /= dm
-		pos.X /= dm
-	}
 	entity.Set(pos)
 	// Inform the client that the entity moved.
-	change := &UpdateEntityChange{
-		Entity:    entity,
+	change := &MoveChange{
+		Position:  &pos,
 		baseEvent: m.baseEvent,
 	}
 	return change

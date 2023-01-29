@@ -34,15 +34,11 @@ message ConnectResponse {
 
 message Request {
   oneof action {
-    MoveAction move = 1;
+    MoveEntity moveEntity = 1;
     AddEntity addEntity = 2;
     RemoveEntity removeEntity = 3;
+    UpdateEntity updateEntity = 4;
   }
-}
-
-message MoveAction {
-  string id = 1;
-  Position position = 2;
 }
 
 message Response {
@@ -50,6 +46,7 @@ message Response {
     AddEntity addEntity = 1;
     UpdateEntity updateEntity = 2;
     RemoveEntity removeEntity = 3;
+    MoveEntity moveEntity = 4;
   }
 }
 
@@ -77,4 +74,9 @@ message UpdateEntity {
 
 message RemoveEntity {
   string id = 1;
+}
+
+message MoveEntity {
+  string id = 1;
+  Position position = 2;
 }

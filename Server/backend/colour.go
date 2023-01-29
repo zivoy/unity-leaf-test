@@ -3,6 +3,7 @@ package backend
 import (
 	"fmt"
 	"image/color"
+	"log"
 )
 
 func colourToHex(colour color.Color) string {
@@ -16,6 +17,10 @@ func colourFromHex(colour string) color.RGBA {
 	switch len(colour) {
 	case 6, 3:
 		return colourFromHex("#" + colour)
+	case 8:
+		return colourFromHex(colour[:6])
+	case 5:
+		return colourFromHex(colour[:4])
 	case 7:
 		_, err = fmt.Sscanf(colour, "#%02x%02x%02x", &c.R, &c.G, &c.B)
 	case 4:
@@ -25,6 +30,7 @@ func colourFromHex(colour string) color.RGBA {
 		c.G *= 17
 		c.B *= 17
 	default:
+		log.Println("can't parse", colour)
 		err = fmt.Errorf("invalid length")
 
 	}

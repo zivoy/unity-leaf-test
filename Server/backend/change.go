@@ -23,3 +23,10 @@ type AddEntityChange struct {
 }
 
 func (c *AddEntityChange) dummy() {}
+
+type MoveChange struct {
+	baseEvent
+	Position *Coordinate
+}
+
+func (c *MoveChange) dummy() {}

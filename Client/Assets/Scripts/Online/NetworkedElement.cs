@@ -8,6 +8,9 @@ namespace Online
         public Vector2 GetPosition();
         public ElementType GetControlType();
         public string ID();
+        public string Name();
+        public string Colour();
+        public bool RemoveOnDisconnect();
         
         public void Destroy();
         

@@ -17,9 +17,10 @@ public class PlayerController : MonoBehaviour, NetworkedElement
         
         if (Controlled)
         {
-            var networkManager = FindObjectOfType<NetworkManager>();
-            networkManager.RegisterObject(gameObject);
             GetComponentInChildren<MeshRenderer>().material.color = Random.ColorHSV();
+
+            var networkManager = FindObjectOfType<NetworkManager>();
+            networkManager.RegisterObject(this);
         }
     }
 
@@ -45,7 +46,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
     public Vector2 GetPosition()
     {
         var pos = transform.position;
-        return new Vector2 { x = pos.x, y = pos.y };
+        return new Vector2 { x = pos.x, y = pos.z };
     }
 
     public void Destroy()
@@ -60,17 +61,35 @@ public class PlayerController : MonoBehaviour, NetworkedElement
             x = entity.Position.X,
             z = entity.Position.Y,
         });
-        var col = Color.red;
-        if (ColorUtility.TryParseHtmlString(entity.Colour, out var playerColour))
-        {
-            col = playerColour;
+        
+        if (entity.Colour != null){
+            var col = Color.red;
+            if (ColorUtility.TryParseHtmlString(entity.Colour, out var playerColour))
+            {
+                col = playerColour;
+            }
+            GetComponentInChildren<MeshRenderer>().material.color = col;
         }
-
-        GetComponentInChildren<MeshRenderer>().material.color = col;
     }
 
     public ElementType GetControlType()
     {
         return Controlled ? ElementType.Owner : ElementType.Listener;
+    }
+
+    public string Colour()
+    {
+        return ColorUtility.ToHtmlStringRGBA(
+            GetComponentInChildren<MeshRenderer>().material.color);
+    }
+
+    public bool RemoveOnDisconnect()
+    {
+        return true;
+    }
+
+    public string Name()
+    {
+        return gameObject.name;
     }
 }
