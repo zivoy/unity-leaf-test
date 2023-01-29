@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour, NetworkedElement
 
     public bool Controlled = false;
 
-//todo choose random colour on startup
     private Rigidbody _rigidbody;
 
     // Start is called before the first frame update
@@ -20,6 +19,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
         {
             var networkManager = FindObjectOfType<NetworkManager>();
             networkManager.RegisterObject(gameObject);
+            GetComponentInChildren<MeshRenderer>().material.color = Random.ColorHSV();
         }
     }
 
