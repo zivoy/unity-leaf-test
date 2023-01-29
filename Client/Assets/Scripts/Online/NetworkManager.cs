@@ -62,21 +62,23 @@ namespace Online
         public void RegisterObject(NetworkedElement obj)
         {
             var id = Guid.NewGuid().ToString();
-
             _objects.Add(id, obj);
+            PostRegistration(id,obj);
         }
 
         public void UnregisterObject(NetworkedElement obj)
         {
             var id = "";
-            foreach (var keyValuePair in _objects)
+            foreach (var (uid, element) in _objects)
             {
-                if (!keyValuePair.Value.Equals(obj)) continue;
-                id = keyValuePair.Key;
+                if (!element.Equals(obj)) continue;
+                id = uid;
                 break;
             }
+
             UnregisterObject(id);
         }
+
         public void UnregisterObject(string id)
         {
             if (_objects.ContainsKey(id)) return;
@@ -123,7 +125,7 @@ namespace Online
                 return;
             }
 
-            PostRegistrars();
+            PostRegistrers();
 
             StartCoroutine(UpdatePosition());
         }
@@ -218,6 +220,7 @@ namespace Online
                 Y = position.y
             };
         }
+
         private Position ToPosition(Vector3 position)
         {
             return new Position
@@ -227,48 +230,54 @@ namespace Online
             };
         }
 
-        private void PostRegistrars()
+        private void PostRegistrers()
         {
             foreach (var (id, obj) in _objects)
             {
-                var req = new Request
-                {
-                    AddEntity = new AddEntity
-                    {
-                        KeepOnDisconnect = !obj.RemoveOnDisconnect(),
-                        Entity = new Entity
-                        {
-                            Id = id,
-                            Type = obj.ID(),
-                            Name = obj.Name(),
-                            Colour = obj.Colour(),
-                            Position = ToPosition(obj.GetPosition())
-                        }
-                    }
-                };
-                GRPC.SendRequest(req);
+                if (obj.GetControlType()==ElementType.Owner)
+                    PostRegistration(id, obj);
             }
         }
 
-            IEnumerator UpdatePosition()
+        private void PostRegistration(string id, NetworkedElement obj)
+        {
+            var req = new Request
+            {
+                AddEntity = new AddEntity
+                {
+                    KeepOnDisconnect = !obj.RemoveOnDisconnect(),
+                    Entity = new Entity
+                    {
+                        Id = id,
+                        Type = obj.ID(),
+                        Name = obj.Name(),
+                        Colour = obj.Colour(),
+                        Position = ToPosition(obj.GetPosition())
+                    }
+                }
+            };
+            GRPC.SendRequest(req);
+        }
+
+        IEnumerator UpdatePosition()
         {
             while (true)
             {
-                foreach (var keyValuePair in _objects)
+                foreach (var (id, element) in _objects)
                 {
-                    if (keyValuePair.Value.GetControlType() == ElementType.Listener) continue;
+                    if (element.GetControlType() == ElementType.Listener) continue;
                     // ideally projectiles should be controlled by the server but i am making them be controlled by the sender for simplicities sake
 
-                    var pos = keyValuePair.Value.GetPosition();
-                    if (_objectLastPos.ContainsKey(keyValuePair.Key) &&
-                        _objectLastPos[keyValuePair.Key] == pos) continue;
-                    _objectLastPos[keyValuePair.Key] = pos;
+                    var pos = element.GetPosition();
+                    if (_objectLastPos.ContainsKey(id) &&
+                        _objectLastPos[id] == pos) continue;
+                    _objectLastPos[id] = pos;
 
                     var req = new Request
                     {
                         MoveEntity = new MoveEntity
                         {
-                            Id = keyValuePair.Key,
+                            Id = id,
                             Position = ToPosition(pos)
                         }
                     };

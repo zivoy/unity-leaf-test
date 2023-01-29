@@ -16,7 +16,7 @@ namespace Online
             _factoryEntity = entity;
             _factoryPosition = position;
             
-            var o = Instantiate(obj, Vector3.positiveInfinity, new Quaternion());
+            var o = Instantiate(obj, _factoryPosition, new Quaternion());
             _factoryObject = o.GetComponent<NetworkedElement>();
             return _factoryObject;
         }

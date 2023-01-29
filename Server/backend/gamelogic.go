@@ -8,10 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const (
-	ActionThrottle = time.Second / 200
-)
-
 type Token uuid.UUID
 
 func (t Token) UUID() uuid.UUID {
@@ -64,12 +60,9 @@ func (g *Game) watchActions() {
 	for {
 		select {
 		case action := <-g.ActionChannel:
-			if action.Runnable(g) {
-				g.Mu.Lock()
-				g.ChangeChannel <- action.Perform(g)
-				action.UpdateAction(g)
-				g.Mu.Unlock()
-			}
+			g.Mu.Lock()
+			g.ChangeChannel <- action.Perform(g)
+			g.Mu.Unlock()
 		case <-g.done:
 			return
 		}

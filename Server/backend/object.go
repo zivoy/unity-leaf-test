@@ -41,7 +41,7 @@ func EntityFromProto(entity *pb.Entity) (*Entity, error) {
 	}
 	return &Entity{
 		ID:              id,
-		CurrentPosition: Coordinate{},
+		CurrentPosition: CoordinateFromProto(entity.GetPosition()),
 		Name:            entity.GetName(),
 		Colour:          colourFromHex(entity.GetColour()),
 		Type:            entity.GetType(),

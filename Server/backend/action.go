@@ -6,21 +6,8 @@ import (
 	"time"
 )
 
-// utility functions for keeping actions in time
-func (g *Game) checkLastActionTime(actionKey string, created time.Time) bool {
-	lastAction, _ := g.lastAction[actionKey]
-	return lastAction.Add(ActionThrottle).Before(created)
-}
-func (g *Game) updateLastActionTime(actionKey string, created time.Time) {
-	if actionKey != "" {
-		g.lastAction[actionKey] = created
-	}
-}
-
 type Action interface {
 	Perform(game *Game) Change
-	UpdateAction(game *Game)
-	Runnable(game *Game) bool
 }
 
 type baseAction struct {
@@ -44,13 +31,6 @@ func (b *baseAction) ActionCode(g *Game) string {
 		return ""
 	}
 	return fmt.Sprintf("%T:%s", b, entity.ID.String())
-}
-
-func (b *baseAction) UpdateAction(g *Game) {
-	g.updateLastActionTime(b.ActionCode(g), b.Created)
-}
-func (b *baseAction) Runnable(g *Game) bool {
-	return g.checkLastActionTime(b.ActionCode(g), b.Created)
 }
 
 type MoveAction struct {

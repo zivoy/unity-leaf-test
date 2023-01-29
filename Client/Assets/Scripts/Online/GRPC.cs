@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Google.Protobuf.Collections;
@@ -43,6 +44,8 @@ namespace Online
         {
             if (Grpc()._active)
                 await Grpc()._queue.Writer.WriteAsync(request);
+            else
+                Grpc()._idleQueue.Enqueue(request);
         }
 
         private readonly Game.GameClient _client;
@@ -51,10 +54,12 @@ namespace Online
         private bool _active;
         private static OnMessageCallback _callback;
         private readonly Channel<Request, Request> _queue;
+        private readonly Queue<Request> _idleQueue;
 
         private GRPC()
         {
             _queue = Channel.CreateUnbounded<Request>();
+            _idleQueue = new Queue<Request>();
             _client = new Game.GameClient(Connection.GetInstance().GetChannel());
         }
 
@@ -87,6 +92,9 @@ namespace Online
             _active = true;
             Task.Run(_readStreamData);
             Task.Run(_messageWriter);
+
+            while (_idleQueue.Count > 0)
+                SendRequest(_idleQueue.Dequeue());
         }
 
         private async void _disconnect()
