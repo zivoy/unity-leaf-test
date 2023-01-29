@@ -5,8 +5,46 @@ namespace Online
 {
     public sealed class Connection
     {
+        /// <summary>
+        ///  Connects to the saved address
+        /// </summary>
+        /// <returns>Grpc.Core.Channel object</returns>
+        public static Channel GetChannel()
+        {
+            return connection()._getChannel();
+        }
+
+        /// <summary>
+        /// Changes the address for the server and connect to it
+        /// </summary>
+        /// <param name="address">a string url with port (example: localhost:50051)</param>
+        /// <returns>Grpc.Core.Channel object</returns>
+        public static Channel ChangeAddress(string address)
+        {
+            Dispose();
+            _address = address;
+            return GetChannel();
+        }
+
+        /// <summary>
+        ///  reads the saved address
+        /// </summary>
+        /// <returns>address of server</returns>
+        public static string GetAddress()
+        {
+            return _address;
+        }
+
+        /// <summary>
+        /// Disconnects the channel
+        /// </summary>
+        public static void Dispose()
+        {
+            connection()._dispose();
+        }
+
         private Channel _channel;
-        private string _address = "localhost:50051";
+        private static string _address = "localhost:50051";
 
         private Connection()
         {
@@ -14,14 +52,14 @@ namespace Online
 
         private static Connection _instance;
 
-        public static Connection GetInstance()
+        private static Connection connection()
         {
             _instance ??= new Connection();
 
             return _instance;
         }
 
-        public Channel GetChannel()
+        private Channel _getChannel()
         {
             if (_channel != null && _channel.State != ChannelState.Shutdown)
             {
@@ -32,19 +70,15 @@ namespace Online
             return _channel;
         }
 
-        public async void Dispose()
+        private async void _dispose()
         {
-            Debug.Log("Shutting down channel");
             if (_channel != null)
+            {
+                Debug.Log("Shutting down channel");
                 await _channel.ShutdownAsync();
-            _instance = null;
-        }
+            }
 
-        public Channel ChangeAddress(string address)
-        {
-            Dispose();
-            _address = address;
-            return GetChannel();
+            _instance = null;
         }
     }
 }

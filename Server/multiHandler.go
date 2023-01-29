@@ -2,9 +2,11 @@ package main
 
 //todo rewrite this
 // empty sersions get deleted
-// timeouts might be bugged
-// have server ping everyone to find disconnects
-// todo multiple sends in one
+// have server ping everyone to find disconnects // keepalive
+// multiple sends in one broadcast
+// dont send requests to sender
+// have send ticks
+// change the colour to a bytes object so arbitrary data can be stored, also players can call a function to send a update entity requst
 
 import (
 	"context"
