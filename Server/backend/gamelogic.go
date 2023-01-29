@@ -70,11 +70,10 @@ func (g *Game) watchActions() {
 }
 
 // AddEntity adds an entity to the game.
-func (g *Game) AddEntity(entity *Entity, client Token, RemoveOnDisconnect bool) {
+func (g *Game) AddEntity(entity *Entity, client *Client, RemoveOnDisconnect bool) {
 	g.ActionChannel <- &AddAction{
-		baseAction:         g.getBaseAction(entity.ID),
+		baseAction:         g.getBaseAction(entity.ID, client),
 		Entity:             entity,
-		ClientID:           client,
 		RemoveOnDisconnect: RemoveOnDisconnect,
 	}
 }
@@ -89,34 +88,40 @@ func (g *Game) GetProtoEntities() []*pb.Entity {
 	return entities
 }
 
-func (g *Game) MoveEntity(id uuid.UUID, position Coordinate) {
+func (g *Game) MoveEntity(id uuid.UUID, client *Client, position Coordinate) {
 	g.ActionChannel <- &MoveAction{
-		baseAction: g.getBaseAction(id),
+		baseAction: g.getBaseAction(id, client),
 		Position:   position,
 	}
 }
 
 // RemoveEntity removes an entity from the game.
-func (g *Game) RemoveEntity(id uuid.UUID) {
-	entity := g.Entities[id]
+func (g *Game) RemoveEntity(id uuid.UUID, client *Client) {
 	g.ActionChannel <- &RemoveAction{
-		baseAction: g.getBaseAction(id),
-		Entity:     entity,
+		baseAction: g.getBaseAction(id, client),
 	}
 }
 
 // RemoveClientsEntities clears out all entities belonging to a user
-func (g *Game) RemoveClientsEntities(id Token) {
-	entities, ok := g.ownedEntities[id]
+func (g *Game) RemoveClientsEntities(client *Client) {
+	entities, ok := g.ownedEntities[client.Id]
 	if !ok {
 		return
 	}
-	g.Mu.Lock()
 	for _, eid := range entities {
-		g.RemoveEntity(eid)
+		g.RemoveEntity(eid, client)
 	}
-	delete(g.ownedEntities, id)
+	g.Mu.Lock()
+	delete(g.ownedEntities, client.Id)
 	g.Mu.Unlock()
+}
+
+// UpdateEntity sends the entities entire information.
+func (g *Game) UpdateEntity(entity *Entity, client *Client) {
+	g.ActionChannel <- &UpdateAction{
+		baseAction: g.getBaseAction(entity.ID, client),
+		Entity:     entity,
+	}
 }
 
 type Event interface {
@@ -125,13 +130,19 @@ type Event interface {
 }
 
 type baseEvent struct {
-	id  uuid.UUID
-	gId string
+	initiator *Client
+	id        uuid.UUID
 }
 
 func (b baseEvent) EntityID() uuid.UUID {
 	return b.id
 }
 func (b baseEvent) GameID() string {
-	return b.gId
+	return b.initiator.Session.GameId
+}
+func (b baseEvent) UserID() Token {
+	return b.initiator.Id
+}
+func (b baseEvent) Client() *Client {
+	return b.initiator
 }

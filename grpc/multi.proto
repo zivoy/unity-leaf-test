@@ -28,8 +28,8 @@ message ConnectRequest {
 }
 
 message ConnectResponse {
-  string token = 2;
-  repeated Entity entities = 3;
+  string token = 1;
+  repeated Entity entities = 2;
 }
 
 message Request {
@@ -51,16 +51,15 @@ message Response {
 }
 
 message Position {
-  float x = 2;
-  float y = 3;
+  float x = 1;
+  float y = 2;
 }
 
 message Entity {
   string id = 1;
-  string name = 2;
-  Position position = 3;
-  string type = 4;
-  string colour = 5;
+  Position position = 2;
+  string type = 3;
+  string Data = 4;
 
 }
 message AddEntity {

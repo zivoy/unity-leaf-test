@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using UnityEngine;
 using protoBuff;
 
@@ -10,27 +11,36 @@ namespace Online
         /// </summary>
         /// <returns>Vector2 position of the object</returns>
         public Vector2 GetPosition();
+
         /// <summary>
         /// Gets if the object should listen to info from the server on where it should be or if it should inform the server of its position
         /// </summary>
         /// <returns>Owner or Listener</returns>
         public ElementType GetControlType();
+
         /// <summary>
         /// ID is a name that the object can be IDed by so other players can spawn it
         /// </summary>
         /// <returns>a unique</returns>
         public string ID();
-        public string Name();
-        public string Colour();
-       /// <summary>
-       ///  boolean value for whether to remove the object for other people once you disconnect from the server
-       /// </summary>
-       /// <returns>keep for others or not bool</returns>
+
+        /// <summary>
+        /// Gets The entities custom data
+        /// </summary>
+        /// <returns>a byteString encoding of the entities custom data</returns>
+        public string Data();
+
+        /// <summary>
+        ///  boolean value for whether to remove the object for other people once you disconnect from the server
+        /// </summary>
+        /// <returns>keep for others or not bool</returns>
         public bool RemoveOnDisconnect();
+
         /// <summary>
         /// destroy is called when someone said to remove this entity
         /// </summary>
         public void Destroy();
+
         /// <summary>
         /// Update functions, this can be blank on 
         /// </summary>

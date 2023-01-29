@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using UnityEngine;
 using Online;
 using protoBuff;
@@ -14,7 +15,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        
+
         if (Controlled)
         {
             GetComponentInChildren<MeshRenderer>().material.color = Random.ColorHSV();
@@ -32,7 +33,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
 
         setPosition(transform.position + input * (Time.deltaTime * m_Speed));
     }
-    
+
     public string ID()
     {
         return "PLAYER";
@@ -61,15 +62,9 @@ public class PlayerController : MonoBehaviour, NetworkedElement
             x = entity.Position.X,
             z = entity.Position.Y,
         });
-        
-        if (entity.Colour != ""){
-            var col = Color.red;
-            if (ColorUtility.TryParseHtmlString(entity.Colour, out var playerColour))
-            {
-                col = playerColour;
-            }
-            GetComponentInChildren<MeshRenderer>().material.color = col;
-        }
+
+        if (entity.Data == "") return;
+        GetComponentInChildren<MeshRenderer>().material.color = getColour(entity.Data);
     }
 
     public ElementType GetControlType()
@@ -77,19 +72,29 @@ public class PlayerController : MonoBehaviour, NetworkedElement
         return Controlled ? ElementType.Owner : ElementType.Listener;
     }
 
-    public string Colour()
-    {
-        return ColorUtility.ToHtmlStringRGBA(
-            GetComponentInChildren<MeshRenderer>().material.color);
-    }
-
     public bool RemoveOnDisconnect()
     {
         return true;
     }
 
-    public string Name()
+    public string Data()
     {
-        return gameObject.name;
+        var objName = gameObject.name;
+        var colour = ColorUtility.ToHtmlStringRGBA(
+            GetComponentInChildren<MeshRenderer>().material.color);
+        colour = colour.Substring(0, 6);
+        return colour + objName;
+    }
+
+    private Color getColour(string dataString)
+    {
+        var colour = "#" + dataString.Substring(0, 6);
+        var col = Color.red;
+        if (ColorUtility.TryParseHtmlString(colour, out var playerColour))
+        {
+            col = playerColour;
+        }
+
+        return col;
     }
 }

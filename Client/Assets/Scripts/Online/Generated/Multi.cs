@@ -28,7 +28,7 @@ namespace protoBuff {
             "b25MaXN0EhgKB3NlcnZlcnMYASADKAsyBy5TZXJ2ZXIiMQoGU2VydmVyEgoK",
             "AmlkGAEgASgJEg4KBm9ubGluZRgCIAEoDRILCgNtYXgYAyABKA0iIQoOQ29u",
             "bmVjdFJlcXVlc3QSDwoHc2Vzc2lvbhgBIAEoCSI7Cg9Db25uZWN0UmVzcG9u",
-            "c2USDQoFdG9rZW4YAiABKAkSGQoIZW50aXRpZXMYAyADKAsyBy5FbnRpdHki",
+            "c2USDQoFdG9rZW4YASABKAkSGQoIZW50aXRpZXMYAiADKAsyBy5FbnRpdHki",
             "pQEKB1JlcXVlc3QSIQoKbW92ZUVudGl0eRgBIAEoCzILLk1vdmVFbnRpdHlI",
             "ABIfCglhZGRFbnRpdHkYAiABKAsyCi5BZGRFbnRpdHlIABIlCgxyZW1vdmVF",
             "bnRpdHkYAyABKAsyDS5SZW1vdmVFbnRpdHlIABIlCgx1cGRhdGVFbnRpdHkY",
@@ -36,18 +36,18 @@ namespace protoBuff {
             "Eh8KCWFkZEVudGl0eRgBIAEoCzIKLkFkZEVudGl0eUgAEiUKDHVwZGF0ZUVu",
             "dGl0eRgCIAEoCzINLlVwZGF0ZUVudGl0eUgAEiUKDHJlbW92ZUVudGl0eRgD",
             "IAEoCzINLlJlbW92ZUVudGl0eUgAEiEKCm1vdmVFbnRpdHkYBCABKAsyCy5N",
-            "b3ZlRW50aXR5SABCCAoGYWN0aW9uIiAKCFBvc2l0aW9uEgkKAXgYAiABKAIS",
-            "CQoBeRgDIAEoAiJdCgZFbnRpdHkSCgoCaWQYASABKAkSDAoEbmFtZRgCIAEo",
-            "CRIbCghwb3NpdGlvbhgDIAEoCzIJLlBvc2l0aW9uEgwKBHR5cGUYBCABKAkS",
-            "DgoGY29sb3VyGAUgASgJIlgKCUFkZEVudGl0eRIXCgZlbnRpdHkYASABKAsy",
-            "By5FbnRpdHkSHQoQa2VlcE9uRGlzY29ubmVjdBgCIAEoCEgAiAEBQhMKEV9r",
-            "ZWVwT25EaXNjb25uZWN0IicKDFVwZGF0ZUVudGl0eRIXCgZlbnRpdHkYASAB",
-            "KAsyBy5FbnRpdHkiGgoMUmVtb3ZlRW50aXR5EgoKAmlkGAEgASgJIjUKCk1v",
-            "dmVFbnRpdHkSCgoCaWQYASABKAkSGwoIcG9zaXRpb24YAiABKAsyCS5Qb3Np",
-            "dGlvbjKEAQoER2FtZRInCgRMaXN0Eg8uU2Vzc2lvblJlcXVlc3QaDC5TZXNz",
-            "aW9uTGlzdCIAEi4KB0Nvbm5lY3QSDy5Db25uZWN0UmVxdWVzdBoQLkNvbm5l",
-            "Y3RSZXNwb25zZSIAEiMKBlN0cmVhbRIILlJlcXVlc3QaCS5SZXNwb25zZSIA",
-            "KAEwAUIUWgZwcm90by+qAglwcm90b0J1ZmZiBnByb3RvMw=="));
+            "b3ZlRW50aXR5SABCCAoGYWN0aW9uIiAKCFBvc2l0aW9uEgkKAXgYASABKAIS",
+            "CQoBeRgCIAEoAiJNCgZFbnRpdHkSCgoCaWQYASABKAkSGwoIcG9zaXRpb24Y",
+            "AiABKAsyCS5Qb3NpdGlvbhIMCgR0eXBlGAMgASgJEgwKBERhdGEYBCABKAki",
+            "WAoJQWRkRW50aXR5EhcKBmVudGl0eRgBIAEoCzIHLkVudGl0eRIdChBrZWVw",
+            "T25EaXNjb25uZWN0GAIgASgISACIAQFCEwoRX2tlZXBPbkRpc2Nvbm5lY3Qi",
+            "JwoMVXBkYXRlRW50aXR5EhcKBmVudGl0eRgBIAEoCzIHLkVudGl0eSIaCgxS",
+            "ZW1vdmVFbnRpdHkSCgoCaWQYASABKAkiNQoKTW92ZUVudGl0eRIKCgJpZBgB",
+            "IAEoCRIbCghwb3NpdGlvbhgCIAEoCzIJLlBvc2l0aW9uMoQBCgRHYW1lEicK",
+            "BExpc3QSDy5TZXNzaW9uUmVxdWVzdBoMLlNlc3Npb25MaXN0IgASLgoHQ29u",
+            "bmVjdBIPLkNvbm5lY3RSZXF1ZXN0GhAuQ29ubmVjdFJlc3BvbnNlIgASIwoG",
+            "U3RyZWFtEgguUmVxdWVzdBoJLlJlc3BvbnNlIgAoATABQhRaBnByb3RvL6oC",
+            "CXByb3RvQnVmZmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -59,7 +59,7 @@ namespace protoBuff {
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Request), global::protoBuff.Request.Parser, new[]{ "MoveEntity", "AddEntity", "RemoveEntity", "UpdateEntity" }, new[]{ "Action" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Response), global::protoBuff.Response.Parser, new[]{ "AddEntity", "UpdateEntity", "RemoveEntity", "MoveEntity" }, new[]{ "Action" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Position), global::protoBuff.Position.Parser, new[]{ "X", "Y" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Entity), global::protoBuff.Entity.Parser, new[]{ "Id", "Name", "Position", "Type", "Colour" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Entity), global::protoBuff.Entity.Parser, new[]{ "Id", "Position", "Type", "Data" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.AddEntity), global::protoBuff.AddEntity.Parser, new[]{ "Entity", "KeepOnDisconnect" }, new[]{ "KeepOnDisconnect" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.UpdateEntity), global::protoBuff.UpdateEntity.Parser, new[]{ "Entity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.RemoveEntity), global::protoBuff.RemoveEntity.Parser, new[]{ "Id" }, null, null, null, null),
@@ -898,7 +898,7 @@ namespace protoBuff {
     }
 
     /// <summary>Field number for the "token" field.</summary>
-    public const int TokenFieldNumber = 2;
+    public const int TokenFieldNumber = 1;
     private string token_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -910,9 +910,9 @@ namespace protoBuff {
     }
 
     /// <summary>Field number for the "entities" field.</summary>
-    public const int EntitiesFieldNumber = 3;
+    public const int EntitiesFieldNumber = 2;
     private static readonly pb::FieldCodec<global::protoBuff.Entity> _repeated_entities_codec
-        = pb::FieldCodec.ForMessage(26, global::protoBuff.Entity.Parser);
+        = pb::FieldCodec.ForMessage(18, global::protoBuff.Entity.Parser);
     private readonly pbc::RepeatedField<global::protoBuff.Entity> entities_ = new pbc::RepeatedField<global::protoBuff.Entity>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -965,7 +965,7 @@ namespace protoBuff {
       output.WriteRawMessage(this);
     #else
       if (Token.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteString(Token);
       }
       entities_.WriteTo(output, _repeated_entities_codec);
@@ -980,7 +980,7 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (Token.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteString(Token);
       }
       entities_.WriteTo(ref output, _repeated_entities_codec);
@@ -1029,11 +1029,11 @@ namespace protoBuff {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 18: {
+          case 10: {
             Token = input.ReadString();
             break;
           }
-          case 26: {
+          case 18: {
             entities_.AddEntriesFrom(input, _repeated_entities_codec);
             break;
           }
@@ -1052,11 +1052,11 @@ namespace protoBuff {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 18: {
+          case 10: {
             Token = input.ReadString();
             break;
           }
-          case 26: {
+          case 18: {
             entities_.AddEntriesFrom(ref input, _repeated_entities_codec);
             break;
           }
@@ -1895,7 +1895,7 @@ namespace protoBuff {
     }
 
     /// <summary>Field number for the "x" field.</summary>
-    public const int XFieldNumber = 2;
+    public const int XFieldNumber = 1;
     private float x_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1907,7 +1907,7 @@ namespace protoBuff {
     }
 
     /// <summary>Field number for the "y" field.</summary>
-    public const int YFieldNumber = 3;
+    public const int YFieldNumber = 2;
     private float y_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1963,11 +1963,11 @@ namespace protoBuff {
       output.WriteRawMessage(this);
     #else
       if (X != 0F) {
-        output.WriteRawTag(21);
+        output.WriteRawTag(13);
         output.WriteFloat(X);
       }
       if (Y != 0F) {
-        output.WriteRawTag(29);
+        output.WriteRawTag(21);
         output.WriteFloat(Y);
       }
       if (_unknownFields != null) {
@@ -1981,11 +1981,11 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (X != 0F) {
-        output.WriteRawTag(21);
+        output.WriteRawTag(13);
         output.WriteFloat(X);
       }
       if (Y != 0F) {
-        output.WriteRawTag(29);
+        output.WriteRawTag(21);
         output.WriteFloat(Y);
       }
       if (_unknownFields != null) {
@@ -2037,11 +2037,11 @@ namespace protoBuff {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 21: {
+          case 13: {
             X = input.ReadFloat();
             break;
           }
-          case 29: {
+          case 21: {
             Y = input.ReadFloat();
             break;
           }
@@ -2060,11 +2060,11 @@ namespace protoBuff {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 21: {
+          case 13: {
             X = input.ReadFloat();
             break;
           }
-          case 29: {
+          case 21: {
             Y = input.ReadFloat();
             break;
           }
@@ -2110,10 +2110,9 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Entity(Entity other) : this() {
       id_ = other.id_;
-      name_ = other.name_;
       position_ = other.position_ != null ? other.position_.Clone() : null;
       type_ = other.type_;
-      colour_ = other.colour_;
+      data_ = other.data_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2135,20 +2134,8 @@ namespace protoBuff {
       }
     }
 
-    /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 2;
-    private string name_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Name {
-      get { return name_; }
-      set {
-        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
     /// <summary>Field number for the "position" field.</summary>
-    public const int PositionFieldNumber = 3;
+    public const int PositionFieldNumber = 2;
     private global::protoBuff.Position position_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2160,7 +2147,7 @@ namespace protoBuff {
     }
 
     /// <summary>Field number for the "type" field.</summary>
-    public const int TypeFieldNumber = 4;
+    public const int TypeFieldNumber = 3;
     private string type_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2171,15 +2158,15 @@ namespace protoBuff {
       }
     }
 
-    /// <summary>Field number for the "colour" field.</summary>
-    public const int ColourFieldNumber = 5;
-    private string colour_ = "";
+    /// <summary>Field number for the "Data" field.</summary>
+    public const int DataFieldNumber = 4;
+    private string data_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Colour {
-      get { return colour_; }
+    public string Data {
+      get { return data_; }
       set {
-        colour_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        data_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -2199,10 +2186,9 @@ namespace protoBuff {
         return true;
       }
       if (Id != other.Id) return false;
-      if (Name != other.Name) return false;
       if (!object.Equals(Position, other.Position)) return false;
       if (Type != other.Type) return false;
-      if (Colour != other.Colour) return false;
+      if (Data != other.Data) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2211,10 +2197,9 @@ namespace protoBuff {
     public override int GetHashCode() {
       int hash = 1;
       if (Id.Length != 0) hash ^= Id.GetHashCode();
-      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (position_ != null) hash ^= Position.GetHashCode();
       if (Type.Length != 0) hash ^= Type.GetHashCode();
-      if (Colour.Length != 0) hash ^= Colour.GetHashCode();
+      if (Data.Length != 0) hash ^= Data.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2237,21 +2222,17 @@ namespace protoBuff {
         output.WriteRawTag(10);
         output.WriteString(Id);
       }
-      if (Name.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Name);
-      }
       if (position_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(18);
         output.WriteMessage(Position);
       }
       if (Type.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteString(Type);
       }
-      if (Colour.Length != 0) {
-        output.WriteRawTag(42);
-        output.WriteString(Colour);
+      if (Data.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(Data);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -2267,21 +2248,17 @@ namespace protoBuff {
         output.WriteRawTag(10);
         output.WriteString(Id);
       }
-      if (Name.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Name);
-      }
       if (position_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(18);
         output.WriteMessage(Position);
       }
       if (Type.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteString(Type);
       }
-      if (Colour.Length != 0) {
-        output.WriteRawTag(42);
-        output.WriteString(Colour);
+      if (Data.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(Data);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -2296,17 +2273,14 @@ namespace protoBuff {
       if (Id.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
       }
-      if (Name.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
-      }
       if (position_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
       }
       if (Type.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Type);
       }
-      if (Colour.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Colour);
+      if (Data.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Data);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2323,9 +2297,6 @@ namespace protoBuff {
       if (other.Id.Length != 0) {
         Id = other.Id;
       }
-      if (other.Name.Length != 0) {
-        Name = other.Name;
-      }
       if (other.position_ != null) {
         if (position_ == null) {
           Position = new global::protoBuff.Position();
@@ -2335,8 +2306,8 @@ namespace protoBuff {
       if (other.Type.Length != 0) {
         Type = other.Type;
       }
-      if (other.Colour.Length != 0) {
-        Colour = other.Colour;
+      if (other.Data.Length != 0) {
+        Data = other.Data;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2358,22 +2329,18 @@ namespace protoBuff {
             break;
           }
           case 18: {
-            Name = input.ReadString();
-            break;
-          }
-          case 26: {
             if (position_ == null) {
               Position = new global::protoBuff.Position();
             }
             input.ReadMessage(Position);
             break;
           }
-          case 34: {
+          case 26: {
             Type = input.ReadString();
             break;
           }
-          case 42: {
-            Colour = input.ReadString();
+          case 34: {
+            Data = input.ReadString();
             break;
           }
         }
@@ -2396,22 +2363,18 @@ namespace protoBuff {
             break;
           }
           case 18: {
-            Name = input.ReadString();
-            break;
-          }
-          case 26: {
             if (position_ == null) {
               Position = new global::protoBuff.Position();
             }
             input.ReadMessage(Position);
             break;
           }
-          case 34: {
+          case 26: {
             Type = input.ReadString();
             break;
           }
-          case 42: {
-            Colour = input.ReadString();
+          case 34: {
+            Data = input.ReadString();
             break;
           }
         }

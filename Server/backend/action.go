@@ -15,11 +15,11 @@ type baseAction struct {
 	Created time.Time
 }
 
-func (g *Game) getBaseAction(id uuid.UUID) baseAction {
+func (g *Game) getBaseAction(id uuid.UUID, client *Client) baseAction {
 	return baseAction{
 		baseEvent: baseEvent{
-			id:  id,
-			gId: g.GameId,
+			id:        id,
+			initiator: client,
 		},
 		Created: time.Now(),
 	}
@@ -56,7 +56,6 @@ func (m *MoveAction) Perform(game *Game) Change {
 
 type RemoveAction struct {
 	baseAction
-	*Entity
 }
 
 func (r *RemoveAction) Perform(game *Game) Change {
@@ -70,18 +69,31 @@ func (r *RemoveAction) Perform(game *Game) Change {
 type AddAction struct {
 	baseAction
 	*Entity
-	ClientID           Token
 	RemoveOnDisconnect bool
 }
 
 func (a *AddAction) Perform(game *Game) Change {
 	game.Entities[a.EntityID()] = a.Entity
 	if a.RemoveOnDisconnect {
-		game.ownedEntities[a.ClientID] = append(game.ownedEntities[a.ClientID], a.EntityID())
+		game.ownedEntities[a.UserID()] = append(game.ownedEntities[a.UserID()], a.EntityID())
 	}
 	change := &AddEntityChange{
 		baseEvent: a.baseEvent,
 		Entity:    a.Entity,
+	}
+	return change
+}
+
+type UpdateAction struct {
+	baseAction
+	*Entity
+}
+
+func (u *UpdateAction) Perform(game *Game) Change {
+	game.Entities[u.EntityID()] = u.Entity
+	change := &AddEntityChange{
+		baseEvent: u.baseEvent,
+		Entity:    u.Entity,
 	}
 	return change
 }

@@ -34,7 +34,7 @@ func (s *GameServer) handleUpdateChange(change backend.UpdateEntityChange) {
 			},
 		},
 	}
-	s.broadcast(change.GameID(), &resp)
+	s.broadcast(change.Client(), &resp)
 }
 
 func (s *GameServer) handleMoveChange(change backend.MoveChange) {
@@ -46,7 +46,7 @@ func (s *GameServer) handleMoveChange(change backend.MoveChange) {
 			},
 		},
 	}
-	s.broadcast(change.GameID(), &resp)
+	s.broadcast(change.Client(), &resp)
 }
 
 func (s *GameServer) handleRemoveChange(change backend.RemoveEntityChange) {
@@ -57,7 +57,7 @@ func (s *GameServer) handleRemoveChange(change backend.RemoveEntityChange) {
 			},
 		},
 	}
-	s.broadcast(change.GameID(), &resp)
+	s.broadcast(change.Client(), &resp)
 }
 
 func (s *GameServer) handleAddChange(change backend.AddEntityChange) {
@@ -68,5 +68,5 @@ func (s *GameServer) handleAddChange(change backend.AddEntityChange) {
 			},
 		},
 	}
-	s.broadcast(change.GameID(), &resp)
+	s.broadcast(change.Client(), &resp)
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Online
 {
-    public class Factory:MonoBehaviour
+    public class Factory : MonoBehaviour
     {
         private Entity _factoryEntity;
         private NetworkedElement _factoryObject;
@@ -14,12 +14,12 @@ namespace Online
         {
             _factoryEntity = entity;
             _factoryPosition = position;
-            
+
             var o = Instantiate(obj, _factoryPosition, new Quaternion());
             _factoryObject = o.GetComponent<NetworkedElement>();
             return _factoryObject;
         }
-        
+
         public void Update()
         {
             if (_factoryObject == null)
@@ -36,7 +36,7 @@ namespace Online
                 Debug.LogWarning(e);
                 return;
             }
-            
+
             Destroy(gameObject);
         }
     }

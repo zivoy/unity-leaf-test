@@ -75,9 +75,9 @@ namespace Online
         private AsyncDuplexStreamingCall<Request, Response> _stream;
         private string _token;
         private static bool _active;
-        private static OnMessageCallback _callback = Debug.Log;  // just log the responses by default
+        private static OnMessageCallback _callback = Debug.Log; // just log the responses by default
         private readonly Channel<Request, Request> _queue;
-        private static readonly Queue<Request> IdleQueue = new ();
+        private static readonly Queue<Request> IdleQueue = new();
 
         private GRPC()
         {

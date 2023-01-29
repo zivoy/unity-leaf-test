@@ -3,14 +3,12 @@ package backend
 import (
 	pb "exampleMulti/proto"
 	"github.com/google/uuid"
-	"image/color"
 )
 
 type Entity struct {
 	ID              uuid.UUID
 	CurrentPosition Coordinate
-	Name            string
-	Colour          color.Color
+	Data            string
 	Type            string
 }
 
@@ -27,8 +25,7 @@ func (e *Entity) Set(c Coordinate) {
 func (e *Entity) ToProto() *pb.Entity {
 	return &pb.Entity{
 		Id:       e.ID.String(),
-		Name:     e.Name,
-		Colour:   colourToHex(e.Colour),
+		Data:     e.Data,
 		Position: e.Position().ToProto(),
 		Type:     e.Type,
 	}
@@ -42,8 +39,7 @@ func EntityFromProto(entity *pb.Entity) (*Entity, error) {
 	return &Entity{
 		ID:              id,
 		CurrentPosition: CoordinateFromProto(entity.GetPosition()),
-		Name:            entity.GetName(),
-		Colour:          colourFromHex(entity.GetColour()),
+		Data:            entity.Data,
 		Type:            entity.GetType(),
 	}, nil
 }

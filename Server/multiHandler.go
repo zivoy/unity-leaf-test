@@ -1,12 +1,10 @@
 package main
 
-//todo rewrite this
+//todo
 // empty sersions get deleted
 // have server ping everyone to find disconnects // keepalive
 // multiple sends in one broadcast
-// dont send requests to sender
 // have send ticks
-// change the colour to a bytes object so arbitrary data can be stored, also players can call a function to send a update entity requst
 
 import (
 	"context"
@@ -26,21 +24,13 @@ const (
 	maxClients    = 4
 )
 
-type client struct {
-	streamServer pb.Game_StreamServer
-	lastMessage  time.Time
-	done         chan error
-	id           backend.Token
-	session      *backend.Game
-}
-
 // GameServer is used to stream game information with clients.
 type GameServer struct {
 	pb.UnimplementedGameServer
 	ChangeChannel chan backend.Change
 	games         map[string]*backend.Game
 	sessionUsers  map[string][]backend.Token
-	clients       map[backend.Token]*client
+	clients       map[backend.Token]*backend.Client
 	mu            sync.RWMutex
 }
 
@@ -48,7 +38,7 @@ type GameServer struct {
 func NewGameServer() *GameServer {
 	server := &GameServer{
 		games:         make(map[string]*backend.Game),
-		clients:       make(map[backend.Token]*client),
+		clients:       make(map[backend.Token]*backend.Client),
 		ChangeChannel: make(chan backend.Change, 10),
 		sessionUsers:  make(map[string][]backend.Token),
 	}
@@ -64,10 +54,10 @@ func (s *GameServer) Stop() {
 	}
 }
 
-func (s *GameServer) addClient(c *client) {
+func (s *GameServer) addClient(c *backend.Client) {
 	s.mu.Lock()
-	s.clients[c.id] = c
-	s.sessionUsers[c.session.GameId] = append(s.sessionUsers[c.session.GameId], c.id)
+	s.clients[c.Id] = c
+	s.sessionUsers[c.Session.GameId] = append(s.sessionUsers[c.Session.GameId], c.Id)
 	s.mu.Unlock()
 }
 
@@ -75,8 +65,8 @@ func (s *GameServer) removeClient(id backend.Token) {
 	log.Printf("%s - removing client", id)
 
 	c := s.clients[id]
-	session := c.session
-	session.RemoveClientsEntities(c.id)
+	session := c.Session
+	session.RemoveClientsEntities(c)
 	s.mu.Lock()
 	delete(s.clients, id)
 	users, ok := s.sessionUsers[session.GameId]
@@ -87,7 +77,7 @@ func (s *GameServer) removeClient(id backend.Token) {
 	serverUsers := make([]backend.Token, len(users)-1, maxClients)
 	count := 0
 	for _, i := range users {
-		if i == c.id {
+		if i == c.Id {
 			continue
 		}
 		serverUsers[count] = i
@@ -116,7 +106,7 @@ func (s *GameServer) removeSession(id string) {
 	session := s.games[id]
 	session.Stop()
 	for _, c := range s.sessionUsers[id] {
-		s.clients[c].done <- errors.New("session has shut down")
+		s.clients[c].Done <- errors.New("session has shut down")
 	}
 	s.mu.Lock()
 	delete(s.games, id)
@@ -125,7 +115,7 @@ func (s *GameServer) removeSession(id string) {
 	log.Println("closing session", id)
 }
 
-func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) {
+func (s *GameServer) getClientFromContext(ctx context.Context) (*backend.Client, error) {
 	headers, ok := metadata.FromIncomingContext(ctx)
 	tokenRaw := headers["authorization"]
 	if len(tokenRaw) == 0 {
@@ -152,13 +142,13 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 	if err != nil {
 		return err
 	}
-	if currentClient.streamServer != nil {
+	if currentClient.StreamServer != nil {
 		return errors.New("stream already active")
 	}
-	currentClient.streamServer = srv
-	game := currentClient.session
+	currentClient.StreamServer = srv
+	game := currentClient.Session
 
-	defer s.removeClient(currentClient.id)
+	defer s.removeClient(currentClient.Id)
 	// Wait for stream requests.
 	var doneError error
 
@@ -167,21 +157,21 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 		for {
 			req, err = srv.Recv()
 			if err == io.EOF {
-				currentClient.done <- nil
+				currentClient.Done <- nil
 				return
 			}
 			if err != nil {
 				log.Printf("receive error %v", err)
-				currentClient.done <- errors.New("failed to receive request")
+				currentClient.Done <- errors.New("failed to receive request")
 				return
 			}
 			//log.Printf("got message %+v", req)
-			currentClient.lastMessage = time.Now()
+			currentClient.LastMessage = time.Now()
 			s.handleRequests(req, currentClient, game)
 		}
 	}()
 	select {
-	case doneError = <-currentClient.done:
+	case doneError = <-currentClient.Done:
 	case <-ctx.Done():
 		doneError = ctx.Err()
 	}
@@ -223,16 +213,11 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	game := s.games[sessionId]
 	entities := game.GetProtoEntities()
 
-	token := backend.NewToken()
-	s.addClient(&client{
-		id:          token,
-		done:        make(chan error, 1),
-		lastMessage: time.Now(),
-		session:     game,
-	})
+	client := backend.NewClient(game)
+	s.addClient(client)
 
 	return &pb.ConnectResponse{
-		Token:    token.String(),
+		Token:    client.Id.String(),
 		Entities: entities,
 	}, nil
 }
@@ -242,8 +227,8 @@ func (s *GameServer) watchTimeout() {
 	go func() {
 		for {
 			for _, client := range s.clients {
-				if time.Since(client.lastMessage) > clientTimeout {
-					client.done <- errors.New("you have been timed out")
+				if time.Since(client.LastMessage) > clientTimeout {
+					client.Done <- errors.New("you have been timed out")
 					return
 				}
 			}
@@ -252,18 +237,19 @@ func (s *GameServer) watchTimeout() {
 	}()
 }
 
-func (s *GameServer) broadcast(session string, resp *pb.Response) {
+func (s *GameServer) broadcast(sender *backend.Client, resp *pb.Response) {
 	s.mu.Lock()
 	for id, currentClient := range s.clients {
-		if currentClient.streamServer == nil {
+		if currentClient.StreamServer == nil {
 			continue
 		}
-		if session != "" && currentClient.session.GameId != session {
+		if sender != nil && (currentClient.Session.GameId != sender.Session.GameId ||
+			currentClient.Id == sender.Id) {
 			continue
 		}
-		if err := currentClient.streamServer.Send(resp); err != nil {
+		if err := currentClient.StreamServer.Send(resp); err != nil {
 			log.Printf("%s - broadcast error %v", id, err)
-			currentClient.done <- errors.New("failed to broadcast message")
+			currentClient.Done <- errors.New("failed to broadcast message")
 			continue
 		}
 		//log.Printf("%s - broadcasted %+v", resp, id)

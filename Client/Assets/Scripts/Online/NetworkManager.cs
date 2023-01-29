@@ -10,7 +10,6 @@ using Request = protoBuff.Request;
 
 //todo add try catches in places to get errors
 // todo make disconnect / connect dialog work
-// todo change to calls and responses layout
 namespace Online
 {
     public delegate void RunOnMainthread();
@@ -171,6 +170,33 @@ namespace Online
                 _mainthreadQueue.Enqueue(function);
         }
 
+        public void UpdateObject(NetworkedElement obj)
+        {
+            var objectID = "";
+            foreach (var (id, element) in _objects)
+            {
+                if (element != obj) continue;
+                objectID = id;
+                break;
+            }
+
+            if (objectID == "") throw new Exception("Cant update, not registered");
+
+            GRPC.SendRequest(new Request
+            {
+                UpdateEntity = new UpdateEntity
+                {
+                    Entity = new Entity
+                    {
+                        Data = obj.Data(),
+                        Id = objectID,
+                        Position = ToPosition(obj.GetPosition()),
+                        Type = obj.ID()
+                    }
+                }
+            });
+        }
+
         private bool isControlled(string id)
         {
             return _objects.ContainsKey(id) && _objects[id].GetControlType() == ElementType.Owner;
@@ -267,8 +293,7 @@ namespace Online
                     {
                         Id = id,
                         Type = obj.ID(),
-                        Name = obj.Name(),
-                        Colour = obj.Colour(),
+                        Data = obj.Data(),
                         Position = ToPosition(obj.GetPosition())
                     }
                 }
@@ -298,7 +323,7 @@ namespace Online
                             Position = ToPosition(pos)
                         }
                     };
-                    GRPC.SendRequest(req);// todo group message sends
+                    GRPC.SendRequest(req); // todo group message sends
                 }
 
                 yield return new WaitForSeconds(1f / updateFps);
