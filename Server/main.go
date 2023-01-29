@@ -34,7 +34,17 @@ func main() {
 	rand.Seed(time.Now().Unix())
 	server := NewGameServer()
 
+	//enforcement := keepalive.EnforcementPolicy{
+	//	MinTime:             5 * time.Second,
+	//	PermitWithoutStream: true,
+	//}
+
 	s := grpc.NewServer()
+	//grpc.KeepaliveEnforcementPolicy(enforcement),
+	//grpc.KeepaliveParams(keepalive.ServerParameters{
+	//	MaxConnectionAge:      10 * time.Second,
+	//	MaxConnectionAgeGrace: 30 * time.Second,
+	//}))
 	pb.RegisterGameServer(s, server)
 
 	ctx := context.Background()
