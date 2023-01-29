@@ -1,10 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using UnityEngine;
 using protoBuff;
-
+using Request = protoBuff.Request;
+//todo add try catches in places
+// todo implement list
 namespace Online
 {
     public class NetworkManager : MonoBehaviour
@@ -15,15 +18,21 @@ namespace Online
         private Dictionary<string, GameObject> _spawnables;
 
         public int updateFps = 60; // update at 60 fps
-        private double _lastInterval;
 
-        private Dictionary<string, NetworkedElement> _objects;
-        private Dictionary<string, Vector2> _objectLastPos;
+        private readonly Dictionary<string, NetworkedElement> _objects;
+        private readonly Dictionary<string, Vector2> _objectLastPos;
         private AsyncDuplexStreamingCall<Request, Response> _stream;
 
         private string _token;
         private bool _active;
+        private readonly Queue<Request> _queue;
 
+        public NetworkManager()
+        {
+            _queue = new Queue<Request>();
+            _objects = new Dictionary<string, NetworkedElement>();
+            _objectLastPos = new Dictionary<string, Vector2>();
+        }
 
         // Start is called before the first frame update
         public void Start()
@@ -50,14 +59,12 @@ namespace Online
 
             DontDestroyOnLoad(gameObject);
             _client = new Game.GameClient(Connection.GetInstance().GetChannel());
-            _objects = new Dictionary<string, NetworkedElement>();
-            _objectLastPos = new Dictionary<string, Vector2>();
 
             Connect();
         }
 
         /// be careful with this and dont have scripts register on wake since it can lead to recursion 
-        public async void RegisterObject(GameObject obj, bool removeOnDisconnect = true)
+        public void RegisterObject(GameObject obj, bool removeOnDisconnect = true)
         {
             var id = Guid.NewGuid().ToString();
             var networkedElement = obj.GetComponent<NetworkedElement>();
@@ -84,10 +91,10 @@ namespace Online
             };
 
             _objects.Add(id, networkedElement);
-            await _stream.RequestStream.WriteAsync(req);
+            SendStreamRequest(req);
         }
 
-        public async void UnregisterObject(NetworkedElement obj)
+        public void UnregisterObject(NetworkedElement obj)
         {
             var id = "";
             foreach (var keyValuePair in _objects)
@@ -106,7 +113,7 @@ namespace Online
                     Id = id
                 }
             };
-            await _stream.RequestStream.WriteAsync(req);
+            SendStreamRequest(req);
         }
 
         private void Connect()
@@ -144,28 +151,16 @@ namespace Online
             }
 
             Task.Run(ReadStreamData);
+            StartCoroutine(SendRequests());
+            StartCoroutine(UpdatePosition());
             _active = true;
         }
 
         //todo implement the rest of player connection, make sure that there is a connection / detext disconnect, work out the dispose as well, its not leaving session
 
-        // Update is called once per frame
-        public void Update()
-        {
-            if (!_active) return;
-            var timeNow = Time.realtimeSinceStartup;
-            var updateInterval = 1f / updateFps;
-            if (timeNow < _lastInterval + updateInterval)
-            {
-                return;
-            }
-
-            _lastInterval = timeNow;
-            UpdatePosition();
-        }
-
         private async void ReadStreamData()
         {
+            // while (!await _stream.ResponseStream.MoveNext()) continue;
             try
             {
                 while (await _stream.ResponseStream.MoveNext())
@@ -223,35 +218,7 @@ namespace Online
             var obj = _objects[entity.Id];
             obj.HandleUpdate(entity);
         }
-
-        private async void UpdatePosition()
-        {
-            foreach (var keyValuePair in _objects)
-            {
-                if (keyValuePair.Value.GetControlType() == ElementType.Listener) continue;
-                // ideally projectiles should be controlled by the server but i am making them be controlled by the sender for simplicities sake
-
-                var pos = keyValuePair.Value.GetPosition();
-                if (_objectLastPos.ContainsKey(keyValuePair.Key) &&
-                    _objectLastPos[keyValuePair.Key] == pos) continue;
-                _objectLastPos[keyValuePair.Key] = pos;
-
-                var req = new Request
-                {
-                    Move = new MoveAction
-                    {
-                        Id = keyValuePair.Key,
-                        Position = new Position
-                        {
-                            X = pos.x,
-                            Y = pos.y
-                        }
-                    }
-                };
-                await _stream.RequestStream.WriteAsync(req);
-            }
-        }
-
+        
         private void OnDestroy()
         {
             Disconnect();
@@ -261,16 +228,67 @@ namespace Online
         {
             Disconnect();
         }
-
+        
         private async void Disconnect()
         {
             if (!_active) return;
+            _active = false;
+            StopAllCoroutines();
             Debug.Log("shutting down stream");
-            Connection.GetInstance().Dispose();
+            await Task.Delay((int)(1000f / updateFps)+1);
             if (_stream != null)
                 await _stream.RequestStream.CompleteAsync();
-            
-            _active = false;
+            Connection.GetInstance().Dispose();
+        }
+
+        private void SendStreamRequest(Request req)
+        {
+            _queue.Enqueue(req);
+        }
+        
+        
+        IEnumerator SendRequests()
+        {
+            while (true)//_queue.Count > 0)
+            {
+                if (_active && _queue.Count > 0)
+                    _stream.RequestStream.WriteAsync(_queue.Dequeue()).Wait();
+
+                yield return null;
+            }
+        }
+        
+        IEnumerator UpdatePosition()
+        {
+            while (true)
+            {
+                foreach (var keyValuePair in _objects)
+                {
+                    if (keyValuePair.Value.GetControlType() == ElementType.Listener) continue;
+                    // ideally projectiles should be controlled by the server but i am making them be controlled by the sender for simplicities sake
+
+                    var pos = keyValuePair.Value.GetPosition();
+                    if (_objectLastPos.ContainsKey(keyValuePair.Key) &&
+                        _objectLastPos[keyValuePair.Key] == pos) continue;
+                    _objectLastPos[keyValuePair.Key] = pos;
+
+                    var req = new Request
+                    {
+                        Move = new MoveAction
+                        {
+                            Id = keyValuePair.Key,
+                            Position = new Position
+                            {
+                                X = pos.x,
+                                Y = pos.y
+                            }
+                        }
+                    };
+                    _queue.Enqueue(req);
+                }
+
+                yield return new WaitForSeconds(1f / updateFps);
+            }
         }
     }
 }

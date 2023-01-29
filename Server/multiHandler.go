@@ -2,6 +2,7 @@ package main
 
 //todo rewrite this
 // empty sersions get deleted
+// timeouts might be bugged
 import (
 	"context"
 	"errors"
@@ -12,29 +13,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc/metadata"
 )
 
 const (
-	clientTimeout = 2 * time.Minute
+	clientTimeout = 15 * time.Minute
 	maxClients    = 4
 )
-
-type token uuid.UUID
-
-func (t token) UUID() uuid.UUID {
-	return uuid.UUID(t)
-}
-func (t token) String() string {
-	return t.UUID().String()
-}
 
 type client struct {
 	streamServer pb.Game_StreamServer
 	lastMessage  time.Time
 	done         chan error
-	id           token
+	id           backend.Token
 	session      *backend.Game
 }
 
@@ -43,8 +34,8 @@ type GameServer struct {
 	pb.UnimplementedGameServer
 	ChangeChannel chan backend.Change
 	games         map[string]*backend.Game
-	sessionUsers  map[string][]token
-	clients       map[token]*client
+	sessionUsers  map[string][]backend.Token
+	clients       map[backend.Token]*client
 	mu            sync.RWMutex
 }
 
@@ -52,9 +43,9 @@ type GameServer struct {
 func NewGameServer() *GameServer {
 	server := &GameServer{
 		games:         make(map[string]*backend.Game),
-		clients:       make(map[token]*client),
+		clients:       make(map[backend.Token]*client),
 		ChangeChannel: make(chan backend.Change, 10),
-		sessionUsers:  make(map[string][]token),
+		sessionUsers:  make(map[string][]backend.Token),
 	}
 	server.watchChanges()
 	server.watchTimeout()
@@ -68,16 +59,16 @@ func (s *GameServer) addClient(c *client) {
 	s.mu.Unlock()
 }
 
-func (s *GameServer) removeClient(id token) {
+func (s *GameServer) removeClient(id backend.Token) {
 	log.Printf("%s - removing client", id)
 
 	c := s.clients[id]
 	session := c.session
-	session.RemoveClientsEntities(c.id.UUID())
+	session.RemoveClientsEntities(c.id)
 	s.mu.Lock()
 	delete(s.clients, id)
 	users := s.sessionUsers[session.GameId]
-	serverUsers := make([]token, len(users)-1, maxClients)
+	serverUsers := make([]backend.Token, len(users)-1, maxClients)
 	count := 0
 	for _, i := range users {
 		if i == c.id {
@@ -87,10 +78,10 @@ func (s *GameServer) removeClient(id token) {
 		count++
 	}
 	s.sessionUsers[session.GameId] = serverUsers
+	s.mu.Unlock()
 	if len(serverUsers) == 0 {
 		s.removeSession(session.GameId)
 	}
-	s.mu.Unlock()
 }
 
 func (s *GameServer) makeSession(id string) {
@@ -98,7 +89,8 @@ func (s *GameServer) makeSession(id string) {
 	_, ok := s.games[id]
 	if !ok {
 		s.games[id] = backend.NewGame(s.ChangeChannel, id)
-		s.sessionUsers[id] = make([]token, 0, maxClients)
+		s.sessionUsers[id] = make([]backend.Token, 0, maxClients)
+		s.games[id].Start()
 		log.Println("starting new session", id)
 	}
 	s.mu.Unlock()
@@ -128,7 +120,7 @@ func (s *GameServer) getClientFromContext(ctx context.Context) (*client, error) 
 		return nil, errors.New("cannot parse token")
 	}
 	s.mu.RLock()
-	currentClient, ok := s.clients[token(uid)]
+	currentClient, ok := s.clients[backend.Token(uid)]
 	s.mu.RUnlock()
 	if !ok {
 		return nil, errors.New("token not recognized")
@@ -152,42 +144,42 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 
 	defer s.removeClient(currentClient.id)
 	// Wait for stream requests.
-	go func() {
-		for {
-			req, err := srv.Recv()
-			if err == io.EOF {
-				currentClient.done <- err
-				return
-			} //todo check if done was closed
-			if err != nil {
-				log.Printf("receive error %v", err)
-				currentClient.done <- errors.New("failed to receive request")
-				return
-			}
-			// log.Printf("got message %+v", req)
-			currentClient.lastMessage = time.Now()
-
-			switch req.GetAction().(type) {
-			case *pb.Request_Move:
-				s.handleMoveRequest(game, req.GetMove())
-			case *pb.Request_AddEntity:
-				s.handleAddRequest(game, req.GetAddEntity(), uuid.UUID(currentClient.id))
-			case *pb.Request_RemoveEntity:
-				s.handleRemoveRequest(game, req.GetRemoveEntity())
-			}
-		}
-	}()
-
-	// Wait for stream to be done.
 	var doneError error
-	select {
-	case <-ctx.Done():
-		doneError = ctx.Err()
-	case doneError = <-currentClient.done:
-	}
-	close(currentClient.done)
+	var req *pb.Request
 
-	if err != io.EOF {
+	for {
+		select {
+		case doneError = <-currentClient.done:
+			break
+		case <-ctx.Done():
+			doneError = ctx.Err()
+			break
+		default:
+			req, err = srv.Recv()
+		}
+		if err == io.EOF {
+			doneError = nil
+			break
+		}
+		if err != nil {
+			log.Printf("receive error %v", err)
+			doneError = errors.New("failed to receive request")
+			break
+		}
+		//log.Printf("got message %+v", req)
+		currentClient.lastMessage = time.Now()
+
+		switch req.GetAction().(type) {
+		case *pb.Request_Move:
+			s.handleMoveRequest(game, req.GetMove())
+		case *pb.Request_AddEntity:
+			s.handleAddRequest(game, req.GetAddEntity(), currentClient.id)
+		case *pb.Request_RemoveEntity:
+			s.handleRemoveRequest(game, req.GetRemoveEntity())
+		}
+	}
+
+	if doneError != nil {
 		log.Printf(`stream done with error "%v"`, doneError)
 	}
 
@@ -224,7 +216,7 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	game := s.games[sessionId]
 	entities := game.GetProtoEntities()
 
-	token := token(uuid.New())
+	token := backend.NewToken()
 	s.addClient(&client{
 		id:          token,
 		done:        make(chan error),
@@ -257,13 +249,15 @@ func (s *GameServer) watchChanges() {
 	go func() {
 		for {
 			change := <-s.ChangeChannel
-			switch change.(type) {
-			case backend.UpdateEntityChange:
-				s.handleUpdateChange(change.(backend.UpdateEntityChange))
-			case backend.RemoveEntityChange:
-				s.handleRemoveChange(change.(backend.RemoveEntityChange))
-			case backend.AddEntityChange:
-				s.handleAddChange(change.(backend.AddEntityChange))
+			switch c := change.(type) {
+			case *backend.UpdateEntityChange:
+				s.handleUpdateChange(*c)
+			case *backend.RemoveEntityChange:
+				s.handleRemoveChange(*c)
+			case *backend.AddEntityChange:
+				s.handleAddChange(*c)
+			default:
+				log.Println("unknown type", c)
 			}
 		}
 	}()
@@ -287,7 +281,7 @@ func (s *GameServer) handleRemoveRequest(game *backend.Game, req *pb.RemoveEntit
 	game.RemoveEntity(id)
 }
 
-func (s *GameServer) handleAddRequest(game *backend.Game, req *pb.AddEntity, clientId uuid.UUID) {
+func (s *GameServer) handleAddRequest(game *backend.Game, req *pb.AddEntity, clientId backend.Token) {
 	ent, err := backend.EntityFromProto(req.GetEntity())
 	if err != nil {
 		log.Println("can't parse entity to add")

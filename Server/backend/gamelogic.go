@@ -13,6 +13,19 @@ const (
 	maxMove        = 5
 )
 
+type Token uuid.UUID
+
+func (t Token) UUID() uuid.UUID {
+	return uuid.UUID(t)
+}
+func (t Token) String() string {
+	return t.UUID().String()
+}
+
+func NewToken() Token {
+	return Token(uuid.New())
+}
+
 type Game struct {
 	Entities      map[uuid.UUID]*Entity
 	Mu            sync.RWMutex
@@ -22,18 +35,19 @@ type Game struct {
 	lastAction    map[string]time.Time
 	GameId        string
 
-	ownedEntities map[uuid.UUID][]uuid.UUID
+	ownedEntities map[Token][]uuid.UUID
 }
 
 // NewGame constructs a new Game struct.
 func NewGame(ChangeChannel chan Change, sessionId string) *Game {
 	game := Game{
 		Entities:      make(map[uuid.UUID]*Entity),
-		ActionChannel: make(chan Action, 1),
+		ActionChannel: make(chan Action, 10),
 		ChangeChannel: ChangeChannel,
 		lastAction:    make(map[string]time.Time),
+		done:          make(chan interface{}),
 
-		ownedEntities: make(map[uuid.UUID][]uuid.UUID),
+		ownedEntities: make(map[Token][]uuid.UUID),
 		GameId:        sessionId,
 	}
 	return &game
@@ -44,19 +58,32 @@ func (g *Game) Start() {
 }
 
 func (g *Game) Stop() {
-	g.done <- true
+	close(g.done)
 }
 
 func (g *Game) watchActions() {
 	for {
 		select {
 		case action := <-g.ActionChannel:
-			g.Mu.Lock()
-			action.Perform(g)
-			g.Mu.Unlock()
+			if action.Runnable(g) {
+				g.Mu.Lock()
+				g.ChangeChannel <- action.Perform(g)
+				action.UpdateAction(g)
+				g.Mu.Unlock()
+			}
 		case <-g.done:
 			return
 		}
+	}
+}
+
+// AddEntity adds an entity to the game.
+func (g *Game) AddEntity(entity *Entity, client Token, RemoveOnDisconnect bool) {
+	g.ActionChannel <- &AddAction{
+		baseAction:         g.getBaseAction(entity.ID),
+		Entity:             entity,
+		ClientID:           client,
+		RemoveOnDisconnect: RemoveOnDisconnect,
 	}
 }
 
@@ -70,18 +97,8 @@ func (g *Game) GetProtoEntities() []*pb.Entity {
 	return entities
 }
 
-// AddEntity adds an entity to the game.
-func (g *Game) AddEntity(entity *Entity, client uuid.UUID, RemoveOnDisconnect bool) {
-	g.ActionChannel <- &AddAction{
-		baseAction:         g.getBaseAction(entity.ID),
-		Entity:             entity,
-		ClientID:           client,
-		RemoveOnDisconnect: RemoveOnDisconnect,
-	}
-}
-
 func (g *Game) MoveEntity(id uuid.UUID, position Coordinate) {
-	g.ActionChannel <- MoveAction{
+	g.ActionChannel <- &MoveAction{
 		baseAction: g.getBaseAction(id),
 		Position:   position,
 	}
@@ -97,7 +114,7 @@ func (g *Game) RemoveEntity(id uuid.UUID) {
 }
 
 // RemoveClientsEntities clears out all entities belonging to a user
-func (g *Game) RemoveClientsEntities(id uuid.UUID) {
+func (g *Game) RemoveClientsEntities(id Token) {
 	entities, ok := g.ownedEntities[id]
 	if !ok {
 		return
@@ -108,10 +125,6 @@ func (g *Game) RemoveClientsEntities(id uuid.UUID) {
 	}
 	delete(g.ownedEntities, id)
 	g.Mu.Unlock()
-}
-
-func (g *Game) sendChange(change Change) {
-	g.ChangeChannel <- change
 }
 
 type Event interface {

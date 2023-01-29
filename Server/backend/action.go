@@ -8,15 +8,19 @@ import (
 
 // utility functions for keeping actions in time
 func (g *Game) checkLastActionTime(actionKey string, created time.Time) bool {
-	lastAction, ok := g.lastAction[actionKey]
-	return !(ok && lastAction.Sub(created) < ActionThrottle)
+	lastAction, _ := g.lastAction[actionKey]
+	return lastAction.Add(ActionThrottle).Before(created)
 }
 func (g *Game) updateLastActionTime(actionKey string, created time.Time) {
-	g.lastAction[actionKey] = created
+	if actionKey != "" {
+		g.lastAction[actionKey] = created
+	}
 }
 
 type Action interface {
-	Perform(game *Game)
+	Perform(game *Game) Change
+	UpdateAction(game *Game)
+	Runnable(game *Game) bool
 }
 
 type baseAction struct {
@@ -34,21 +38,32 @@ func (g *Game) getBaseAction(id uuid.UUID) baseAction {
 	}
 }
 
+func (b *baseAction) ActionCode(g *Game) string {
+	entity := g.Entities[b.EntityID()]
+	if entity == nil {
+		return ""
+	}
+	return fmt.Sprintf("%T:%s", b, entity.ID.String())
+}
+
+func (b *baseAction) UpdateAction(g *Game) {
+	g.updateLastActionTime(b.ActionCode(g), b.Created)
+}
+func (b *baseAction) Runnable(g *Game) bool {
+	return g.checkLastActionTime(b.ActionCode(g), b.Created)
+}
+
 type MoveAction struct {
 	baseAction
 	Position Coordinate
 }
 
-func (m MoveAction) Perform(game *Game) {
+func (m *MoveAction) Perform(game *Game) Change {
 	entity := game.Entities[m.EntityID()]
 	if entity == nil {
-		return
+		return nil
 	}
 
-	actionKey := fmt.Sprintf("%T:%s", m, entity.ID.String())
-	if !game.checkLastActionTime(actionKey, m.Created) {
-		return
-	}
 	position := entity.Position()
 	pos := m.Position
 	if d := position.Distance(pos); d > maxMove {
@@ -62,8 +77,7 @@ func (m MoveAction) Perform(game *Game) {
 		Entity:    entity,
 		baseEvent: m.baseEvent,
 	}
-	game.sendChange(change)
-	game.updateLastActionTime(actionKey, m.Created)
+	return change
 }
 
 type RemoveAction struct {
@@ -71,31 +85,29 @@ type RemoveAction struct {
 	*Entity
 }
 
-func (r *RemoveAction) Perform(game *Game) {
-	game.Mu.Lock()
+func (r *RemoveAction) Perform(game *Game) Change {
 	delete(game.Entities, r.EntityID())
-	game.Mu.Unlock()
-	game.sendChange(&RemoveEntityChange{
+	change := &RemoveEntityChange{
 		baseEvent: r.baseEvent,
-	})
+	}
+	return change
 }
 
 type AddAction struct {
 	baseAction
 	*Entity
-	ClientID           uuid.UUID
+	ClientID           Token
 	RemoveOnDisconnect bool
 }
 
-func (a *AddAction) Perform(game *Game) {
-	game.Mu.Lock()
+func (a *AddAction) Perform(game *Game) Change {
 	game.Entities[a.EntityID()] = a.Entity
 	if a.RemoveOnDisconnect {
 		game.ownedEntities[a.ClientID] = append(game.ownedEntities[a.ClientID], a.EntityID())
 	}
-	game.Mu.Unlock()
-	game.sendChange(&AddEntityChange{
+	change := &AddEntityChange{
 		baseEvent: a.baseEvent,
 		Entity:    a.Entity,
-	})
+	}
+	return change
 }

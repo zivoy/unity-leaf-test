@@ -1,21 +1,25 @@
 package backend
 
 type Change interface {
+	dummy()
 }
 
 type UpdateEntityChange struct {
-	Change
 	baseEvent
 	Entity *Entity
 }
+
+func (c *UpdateEntityChange) dummy() {}
 
 type RemoveEntityChange struct {
-	Change
 	baseEvent
 }
 
+func (c *RemoveEntityChange) dummy() {}
+
 type AddEntityChange struct {
-	Change
 	baseEvent
 	Entity *Entity
 }
+
+func (c *AddEntityChange) dummy() {}

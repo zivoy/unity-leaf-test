@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-
+        
         if (Controlled)
         {
             var networkManager = FindObjectOfType<NetworkManager>();
