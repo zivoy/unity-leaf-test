@@ -51,7 +51,7 @@ namespace Online
             {
                 var networkedElement = spawnable.GetComponent<NetworkedElement>();
                 if (networkedElement == null)
-                    throw new Exception(spawnable.name + " is missing an script that implements NetworkedElement");
+                    throw new Exception(spawnable.name + " is missing a script that implements NetworkedElement");
 
                 if (_spawnables.ContainsKey(networkedElement.ID()))
                     throw new Exception("name collision with " + networkedElement.ID());
@@ -143,8 +143,7 @@ namespace Online
             StartCoroutine(UpdatePosition());
         }
 
-        //todo implement the rest of player connection, make sure that there is a connection / detext disconnect, work out the dispose as well, its not leaving session
-
+        //todo implement the rest of player connection, make sure that there is a connection / detext disconnect
         private void onMessage(Response action)
         {
             Debug.Log(action);
@@ -299,7 +298,7 @@ namespace Online
                             Position = ToPosition(pos)
                         }
                     };
-                    GRPC.SendRequest(req);
+                    GRPC.SendRequest(req);// todo group message sends
                 }
 
                 yield return new WaitForSeconds(1f / updateFps);

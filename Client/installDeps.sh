@@ -2,7 +2,7 @@
 
 if [ -d "./Assets/Plugins" ] 
 then
-    echo "Plugins are already isntalled"
+    echo "Plugins are already installed"
     exit
 fi
 
