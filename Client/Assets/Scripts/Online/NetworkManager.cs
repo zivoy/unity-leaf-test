@@ -8,10 +8,13 @@ using UnityEngine;
 using protoBuff;
 using Request = protoBuff.Request;
 
-//todo add try catches in places
+//todo add try catches in places to get errors
+// todo make disconnect / connect dialog work
 // todo change to calls and responses layout
 namespace Online
 {
+    public delegate void RunOnMainthread();
+
     public class NetworkManager : MonoBehaviour
     {
         public GameObject[] spawnables;
@@ -21,12 +24,14 @@ namespace Online
 
         private readonly Dictionary<string, NetworkedElement> _objects;
         private readonly Dictionary<string, Vector2> _objectLastPos;
-
+        private readonly Queue<RunOnMainthread> _mainthreadQueue;
 
         public NetworkManager()
+
         {
             _objects = new Dictionary<string, NetworkedElement>();
             _objectLastPos = new Dictionary<string, Vector2>();
+            _mainthreadQueue = new Queue<RunOnMainthread>();
             GRPC.RegisterMessageCallback(onMessage);
         }
 
@@ -58,12 +63,20 @@ namespace Online
             Connect();
         }
 
+        public void Update()
+        {
+            while (_mainthreadQueue.Count > 0)
+            {
+                _mainthreadQueue.Dequeue()();
+            }
+        }
+
         /// be careful with this and dont have scripts register on wake since it can lead to recursion 
         public void RegisterObject(NetworkedElement obj)
         {
             var id = Guid.NewGuid().ToString();
             _objects.Add(id, obj);
-            PostRegistration(id,obj);
+            PostRegistration(id, obj);
         }
 
         public void UnregisterObject(NetworkedElement obj)
@@ -135,23 +148,28 @@ namespace Online
         private void onMessage(Response action)
         {
             Debug.Log(action);
+            RunOnMainthread function = null;
             switch (action.ActionCase)
             {
                 case Response.ActionOneofCase.AddEntity:
-                    AddEntity(action.AddEntity.Entity);
+                    function = () => { AddEntity(action.AddEntity.Entity); };
                     break;
                 case Response.ActionOneofCase.RemoveEntity:
-                    RemoveEntity(action.AddEntity.Entity);
+                    function = () => { RemoveEntity(action.RemoveEntity.Id); };
                     break;
                 case Response.ActionOneofCase.UpdateEntity:
-                    UpdateEntity(action.UpdateEntity.Entity);
+                    function = () => { UpdateEntity(action.UpdateEntity.Entity); };
                     break;
                 case Response.ActionOneofCase.MoveEntity:
-                    MoveEntity(action.MoveEntity);
+                    function = () => { MoveEntity(action.MoveEntity); };
                     break;
+                case Response.ActionOneofCase.None:
                 default:
                     break;
             }
+
+            if (function != null)
+                _mainthreadQueue.Enqueue(function);
         }
 
         private bool isControlled(string id)
@@ -171,11 +189,11 @@ namespace Online
             _objects[entity.Id] = script;
         }
 
-        private void RemoveEntity(Entity entity)
+        private void RemoveEntity(string id)
         {
-            if (isControlled(entity.Id)) return;
-            var obj = _objects[entity.Id];
-            _objects.Remove(entity.Id);
+            if (isControlled(id)) return;
+            var obj = _objects[id];
+            _objects.Remove(id);
             obj.Destroy();
         }
 
@@ -234,7 +252,7 @@ namespace Online
         {
             foreach (var (id, obj) in _objects)
             {
-                if (obj.GetControlType()==ElementType.Owner)
+                if (obj.GetControlType() == ElementType.Owner)
                     PostRegistration(id, obj);
             }
         }

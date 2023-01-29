@@ -1,7 +1,6 @@
 using System;
 using protoBuff;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Online
 {
@@ -30,10 +29,11 @@ namespace Online
 
             try
             {
-                _factoryObject.HandleUpdate(_factoryEntity);
+                _factoryObject?.HandleUpdate(_factoryEntity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.LogWarning(e);
                 return;
             }
             

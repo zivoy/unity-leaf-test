@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour, NetworkedElement
             z = entity.Position.Y,
         });
         
-        if (entity.Colour != null){
+        if (entity.Colour != ""){
             var col = Color.red;
             if (ColorUtility.TryParseHtmlString(entity.Colour, out var playerColour))
             {
