@@ -42,10 +42,11 @@ namespace Online
         public void Destroy();
 
         /// <summary>
-        /// Update functions, this can be blank on 
+        /// Update function, for listener objects
         /// </summary>
-        /// <param name="entity"></param>
-        public void HandleUpdate(Entity entity);
+        /// <param name="position"></param>
+        /// <param name="data"></param>
+        public void HandleUpdate(Vector2 position, string data);
     }
 
     /// <summary>

@@ -10,15 +10,17 @@ public class PlayerController : MonoBehaviour, NetworkedElement
     public bool Controlled = false;
 
     private Rigidbody _rigidbody;
+    private MeshRenderer _meshRenderer;
 
-    // Start is called before the first frame update
+// Start is called before the first frame update
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _meshRenderer = GetComponentInChildren<MeshRenderer>();
 
         if (Controlled)
         {
-            GetComponentInChildren<MeshRenderer>().material.color = Random.ColorHSV();
+            _meshRenderer.material.color = Random.ColorHSV();
 
             var networkManager = FindObjectOfType<NetworkManager>();
             networkManager.RegisterObject(this);
@@ -55,16 +57,16 @@ public class PlayerController : MonoBehaviour, NetworkedElement
         Destroy(gameObject);
     }
 
-    public void HandleUpdate(Entity entity)
+    public void HandleUpdate(Vector2 position, string data)
     {
         setPosition(new Vector3
         {
-            x = entity.Position.X,
-            z = entity.Position.Y,
+            x = position.x,
+            z = position.y,
         });
 
-        if (entity.Data == "") return;
-        GetComponentInChildren<MeshRenderer>().material.color = getColour(entity.Data);
+        if (data == "") return;
+        _meshRenderer.material.color = getColour(data);
     }
 
     public ElementType GetControlType()

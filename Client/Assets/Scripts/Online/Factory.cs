@@ -8,14 +8,17 @@ namespace Online
     {
         private Entity _factoryEntity;
         private NetworkedElement _factoryObject;
-        private Vector3 _factoryPosition;
+        private Vector2 _factoryPosition;
 
-        public NetworkedElement SpawnElement(Entity entity, GameObject obj, Vector3 position)
+        public NetworkedElement SpawnElement(Entity entity, GameObject obj)
         {
             _factoryEntity = entity;
-            _factoryPosition = position;
+            _factoryPosition = new Vector2 { x = _factoryEntity.Position.X, y = _factoryEntity.Position.Y };
 
-            var o = Instantiate(obj, _factoryPosition, new Quaternion());
+
+            Vector3 pos = _factoryPosition;
+            (pos.y, pos.z) = (pos.z, pos.y);
+            var o = Instantiate(obj, pos, new Quaternion());
             _factoryObject = o.GetComponent<NetworkedElement>();
             return _factoryObject;
         }
@@ -29,7 +32,7 @@ namespace Online
 
             try
             {
-                _factoryObject?.HandleUpdate(_factoryEntity);
+                _factoryObject?.HandleUpdate(_factoryPosition, _factoryEntity.Data);
             }
             catch (Exception e)
             {

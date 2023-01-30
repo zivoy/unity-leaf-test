@@ -1,19 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using Google.Protobuf.Collections;
 using Grpc.Core;
 using UnityEngine;
 using protoBuff;
 using Request = protoBuff.Request;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 //todo add try catches in places to get errors
 // todo make disconnect / connect dialog work
 namespace Online
 {
-    public delegate void RunOnMainthread();
-
     public class NetworkManager : MonoBehaviour
     {
         public GameObject[] spawnables;
@@ -23,6 +24,8 @@ namespace Online
 
         private readonly Dictionary<string, NetworkedElement> _objects;
         private readonly Dictionary<string, Vector2> _objectLastPos;
+        
+        private delegate void RunOnMainthread();
         private readonly Queue<RunOnMainthread> _mainthreadQueue;
 
         public NetworkManager()
@@ -206,11 +209,7 @@ namespace Online
         {
             if (_objects.ContainsKey(entity.Id)) return;
             var factory = new GameObject().AddComponent<Factory>();
-            var script = factory.SpawnElement(entity, _spawnables[entity.Type], new Vector3
-            {
-                x = entity.Position.X,
-                z = entity.Position.Y
-            });
+            var script = factory.SpawnElement(entity, _spawnables[entity.Type]);
             _objects[entity.Id] = script;
         }
 
@@ -225,17 +224,13 @@ namespace Online
         private void UpdateEntity(Entity entity)
         {
             if (isControlled(entity.Id)) return;
-            var obj = _objects[entity.Id];
-            obj.HandleUpdate(entity);
+            _objects[entity.Id].HandleUpdate(ToVector2(entity.Position), entity.Data);
         }
 
         private void MoveEntity(MoveEntity moveAction)
         {
             if (isControlled(moveAction.Id)) return;
-            _objects[moveAction.Id].HandleUpdate(new Entity
-            {
-                Position = moveAction.Position,
-            });
+            _objects[moveAction.Id].HandleUpdate(ToVector2(moveAction.Position), "");
         }
 
         private void OnDestroy()
@@ -255,7 +250,7 @@ namespace Online
             GRPC.Disconnect();
         }
 
-        private Position ToPosition(Vector2 position)
+        private static Position ToPosition(Vector2 position)
         {
             return new Position
             {
@@ -264,12 +259,12 @@ namespace Online
             };
         }
 
-        private Position ToPosition(Vector3 position)
+        private static Vector2 ToVector2(Position position)
         {
-            return new Position
+            return new Vector2
             {
-                X = position.x,
-                Y = position.z
+                x = position.X,
+                y = position.Y
             };
         }
 

@@ -18,7 +18,7 @@ Expand-Archive "threading-package.zip" -DestinationPath "./Assets/Plugins/$folde
 rm "threading-package.zip" -force
 cd Assets/Plugins
 mv $folder/lib/net462 .
-rm -rf $folder
+rm $folder -Recurse
 mkdir $folder/lib -ea 0 > $null
 mv net462 $folder/lib/
 cd ../..
