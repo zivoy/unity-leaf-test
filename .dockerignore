@@ -1,0 +1,5 @@
+.git/
+Client/
+Grpc-Tools/
+.vscode/
+Server/proto
