@@ -8,23 +8,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type Token uuid.UUID
-
-func (t Token) UUID() uuid.UUID {
-	return uuid.UUID(t)
-}
-func (t Token) String() string {
-	return t.UUID().String()
-}
-
-func NewToken() Token {
-	return Token(uuid.New())
-}
-
 type Game struct {
 	Entities      map[uuid.UUID]*Entity
 	Mu            sync.RWMutex
-	ActionChannel chan Action
+	ActionChannel chan GameAction
 	ChangeChannel chan Change
 	done          chan interface{}
 	lastAction    map[string]time.Time
@@ -37,7 +24,7 @@ type Game struct {
 func NewGame(ChangeChannel chan Change, sessionId string) *Game {
 	game := Game{
 		Entities:      make(map[uuid.UUID]*Entity),
-		ActionChannel: make(chan Action, 10),
+		ActionChannel: make(chan GameAction, 10),
 		ChangeChannel: ChangeChannel,
 		lastAction:    make(map[string]time.Time),
 		done:          make(chan interface{}),
@@ -70,9 +57,9 @@ func (g *Game) watchActions() {
 }
 
 // AddEntity adds an entity to the game.
-func (g *Game) AddEntity(entity *Entity, client *Client, RemoveOnDisconnect bool) {
+func (g *Game) AddEntity(entity *Entity, action *Action, RemoveOnDisconnect bool) {
 	g.ActionChannel <- &AddAction{
-		baseAction:         g.getBaseAction(entity.ID, client),
+		baseAction:         g.getBaseAction(entity.ID, action),
 		Entity:             entity,
 		RemoveOnDisconnect: RemoveOnDisconnect,
 	}
@@ -88,17 +75,17 @@ func (g *Game) GetProtoEntities() []*pb.Entity {
 	return entities
 }
 
-func (g *Game) MoveEntity(id uuid.UUID, client *Client, position Coordinate) {
+func (g *Game) MoveEntity(id uuid.UUID, action *Action, position Coordinate) {
 	g.ActionChannel <- &MoveAction{
-		baseAction: g.getBaseAction(id, client),
+		baseAction: g.getBaseAction(id, action),
 		Position:   position,
 	}
 }
 
 // RemoveEntity removes an entity from the game.
-func (g *Game) RemoveEntity(id uuid.UUID, client *Client) {
+func (g *Game) RemoveEntity(id uuid.UUID, action *Action) {
 	g.ActionChannel <- &RemoveAction{
-		baseAction: g.getBaseAction(id, client),
+		baseAction: g.getBaseAction(id, action),
 	}
 }
 
@@ -108,8 +95,9 @@ func (g *Game) RemoveClientsEntities(client *Client) {
 	if !ok {
 		return
 	}
-	for _, eid := range entities {
-		g.RemoveEntity(eid, client)
+	group := NewActonGroup(g, NilClient(client), len(entities))
+	for i, eid := range entities {
+		g.RemoveEntity(eid, NewAction(i, nil, group))
 	}
 	g.Mu.Lock()
 	delete(g.ownedEntities, client.Id)
@@ -117,9 +105,9 @@ func (g *Game) RemoveClientsEntities(client *Client) {
 }
 
 // UpdateEntity sends the entities entire information.
-func (g *Game) UpdateEntity(entity *Entity, client *Client) {
+func (g *Game) UpdateEntity(entity *Entity, action *Action) {
 	g.ActionChannel <- &UpdateAction{
-		baseAction: g.getBaseAction(entity.ID, client),
+		baseAction: g.getBaseAction(entity.ID, action),
 		Entity:     entity,
 	}
 }
@@ -130,19 +118,22 @@ type Event interface {
 }
 
 type baseEvent struct {
-	initiator *Client
-	id        uuid.UUID
+	action *Action
+	id     uuid.UUID
 }
 
 func (b baseEvent) EntityID() uuid.UUID {
 	return b.id
 }
 func (b baseEvent) GameID() string {
-	return b.initiator.Session.GameId
+	return b.Client().Session.GameId
 }
 func (b baseEvent) UserID() Token {
-	return b.initiator.Id
+	return b.Client().Id
 }
 func (b baseEvent) Client() *Client {
-	return b.initiator
+	return b.action.Client()
+}
+func (b baseEvent) Action() *Action {
+	return b.action
 }

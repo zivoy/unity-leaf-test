@@ -3,7 +3,6 @@ package main
 //todo
 // empty sersions get deleted
 // have server ping everyone to find disconnects // keepalive
-// multiple sends in one broadcast
 // have send ticks
 
 import (
@@ -167,7 +166,11 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 			}
 			//log.Printf("got message %+v", req)
 			currentClient.LastMessage = time.Now()
-			s.handleRequests(req, currentClient, game)
+			requests := req.GetRequests()
+			group := backend.NewActonGroup(game, currentClient, len(requests))
+			for i, request := range requests { //todo
+				s.handleRequests(backend.NewAction(i, request, group))
+			}
 		}
 	}()
 	select {
@@ -237,22 +240,27 @@ func (s *GameServer) watchTimeout() {
 	}()
 }
 
-func (s *GameServer) broadcast(sender *backend.Client, resp *pb.Response) {
+func (s *GameServer) broadcast(resp *backend.Action) {
+	group := resp.Group
+	if !group.Collect(resp) {
+		return // not all messages collected yet
+	}
+
 	s.mu.Lock()
 	for id, currentClient := range s.clients {
 		if currentClient.StreamServer == nil {
 			continue
 		}
-		if sender != nil && (currentClient.Session.GameId != sender.Session.GameId ||
-			currentClient.Id == sender.Id) {
+		if group.Sender != nil && (currentClient.Session.GameId != group.Sender.Session.GameId || // if client is nil then the message will be sent to all users in all sessions
+			currentClient.Id == group.Sender.Id) {
 			continue
 		}
-		if err := currentClient.StreamServer.Send(resp); err != nil {
+
+		if err := currentClient.StreamServer.Send(&pb.Response{Responses: group.GetActions()}); err != nil {
 			log.Printf("%s - broadcast error %v", id, err)
 			currentClient.Done <- errors.New("failed to broadcast message")
 			continue
 		}
-		//log.Printf("%s - broadcasted %+v", resp, id)
 	}
 	s.mu.Unlock()
 }

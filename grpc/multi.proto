@@ -33,20 +33,20 @@ message ConnectResponse {
 }
 
 message Request {
+  repeated StreamAction requests= 1;
+}
+
+
+message Response {
+  repeated StreamAction responses = 1;
+}
+
+message StreamAction {
   oneof action {
     MoveEntity moveEntity = 1;
     AddEntity addEntity = 2;
     RemoveEntity removeEntity = 3;
     UpdateEntity updateEntity = 4;
-  }
-}
-
-message Response {
-  oneof action {
-    AddEntity addEntity = 1;
-    UpdateEntity updateEntity = 2;
-    RemoveEntity removeEntity = 3;
-    MoveEntity moveEntity = 4;
   }
 }
 

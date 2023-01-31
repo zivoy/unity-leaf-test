@@ -60,7 +60,7 @@ namespace Online
         }
 
         /// <summary>
-        /// Sends a request over the GRPC channel, unsent request will be put in a queue that gets sent once there is a connection
+        /// Send a collection of requests over the GRPC channel, unsent request will be put in a queue that gets sent once there is a connection
         /// </summary>
         /// <param name="request">A protoBuff.Request to send over the channel</param>
         public static async void SendRequest(Request request)
@@ -70,6 +70,16 @@ namespace Online
             else
                 IdleQueue.Enqueue(request);
         }
+
+        /// <summary>
+        /// Send a single request over GRPC
+        /// </summary>
+        /// <param name="request">A protoBuff.StreamAction to send</param>
+        public static void SendRequest(StreamAction request)
+        {
+            SendRequest(new Request { Requests = { request } });
+        }
+
 
         private readonly Game.GameClient _client;
         private AsyncDuplexStreamingCall<Request, Response> _stream;

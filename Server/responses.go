@@ -27,46 +27,47 @@ func (s *GameServer) watchChanges() {
 }
 
 func (s *GameServer) handleUpdateChange(change backend.UpdateEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_UpdateEntity{
+	resp := &pb.StreamAction{
+		Action: &pb.StreamAction_UpdateEntity{
 			UpdateEntity: &pb.UpdateEntity{
 				Entity: change.Entity.ToProto(),
 			},
 		},
 	}
-	s.broadcast(change.Client(), &resp)
+	s.broadcast(change.Action().AddResponse(resp))
 }
 
 func (s *GameServer) handleMoveChange(change backend.MoveChange) {
-	resp := pb.Response{
-		Action: &pb.Response_MoveEntity{
+	resp := &pb.StreamAction{
+		Action: &pb.StreamAction_MoveEntity{
 			MoveEntity: &pb.MoveEntity{
 				Position: change.Position.ToProto(),
 				Id:       change.EntityID().String(),
 			},
 		},
 	}
-	s.broadcast(change.Client(), &resp)
+
+	s.broadcast(change.Action().AddResponse(resp))
 }
 
 func (s *GameServer) handleRemoveChange(change backend.RemoveEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_RemoveEntity{
+	resp := &pb.StreamAction{
+		Action: &pb.StreamAction_RemoveEntity{
 			RemoveEntity: &pb.RemoveEntity{
 				Id: change.EntityID().String(),
 			},
 		},
 	}
-	s.broadcast(change.Client(), &resp)
+	s.broadcast(change.Action().AddResponse(resp))
 }
 
 func (s *GameServer) handleAddChange(change backend.AddEntityChange) {
-	resp := pb.Response{
-		Action: &pb.Response_AddEntity{
+	resp := &pb.StreamAction{
+		Action: &pb.StreamAction_AddEntity{
 			AddEntity: &pb.AddEntity{
 				Entity: change.Entity.ToProto(),
 			},
 		},
 	}
-	s.broadcast(change.Client(), &resp)
+	s.broadcast(change.Action().AddResponse(resp))
 }

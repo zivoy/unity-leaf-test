@@ -21,3 +21,9 @@ func NewClient(game *Game) *Client {
 		Session:     game,
 	}
 }
+
+func NilClient(client *Client) *Client {
+	return &Client{
+		Session: client.Session,
+	}
+}

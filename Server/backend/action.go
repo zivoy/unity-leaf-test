@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type Action interface {
+type GameAction interface {
 	Perform(game *Game) Change
 }
 
@@ -15,11 +15,11 @@ type baseAction struct {
 	Created time.Time
 }
 
-func (g *Game) getBaseAction(id uuid.UUID, client *Client) baseAction {
+func (g *Game) getBaseAction(id uuid.UUID, action *Action) baseAction {
 	return baseAction{
 		baseEvent: baseEvent{
-			id:        id,
-			initiator: client,
+			id:     id,
+			action: action,
 		},
 		Created: time.Now(),
 	}

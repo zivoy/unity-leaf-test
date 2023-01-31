@@ -24,8 +24,9 @@ namespace Online
 
         private readonly Dictionary<string, NetworkedElement> _objects;
         private readonly Dictionary<string, Vector2> _objectLastPos;
-        
+
         private delegate void RunOnMainthread();
+
         private readonly Queue<RunOnMainthread> _mainthreadQueue;
 
         public NetworkManager()
@@ -100,7 +101,7 @@ namespace Online
             _objects[id].Destroy();
             _objects.Remove(id);
 
-            var req = new Request
+            var req = new StreamAction
             {
                 RemoveEntity = new RemoveEntity
                 {
@@ -148,29 +149,32 @@ namespace Online
         //todo implement the rest of player connection, make sure that there is a connection / detext disconnect
         private void onMessage(Response action)
         {
-            Debug.Log(action);
-            RunOnMainthread function = null;
-            switch (action.ActionCase)
+            foreach (var response in action.Responses)
             {
-                case Response.ActionOneofCase.AddEntity:
-                    function = () => { AddEntity(action.AddEntity.Entity); };
-                    break;
-                case Response.ActionOneofCase.RemoveEntity:
-                    function = () => { RemoveEntity(action.RemoveEntity.Id); };
-                    break;
-                case Response.ActionOneofCase.UpdateEntity:
-                    function = () => { UpdateEntity(action.UpdateEntity.Entity); };
-                    break;
-                case Response.ActionOneofCase.MoveEntity:
-                    function = () => { MoveEntity(action.MoveEntity); };
-                    break;
-                case Response.ActionOneofCase.None:
-                default:
-                    break;
-            }
+                Debug.Log(action);
+                RunOnMainthread function = null;
+                switch (response.ActionCase)
+                {
+                    case StreamAction.ActionOneofCase.AddEntity:
+                        function = () => { AddEntity(response.AddEntity.Entity); };
+                        break;
+                    case StreamAction.ActionOneofCase.RemoveEntity:
+                        function = () => { RemoveEntity(response.RemoveEntity.Id); };
+                        break;
+                    case StreamAction.ActionOneofCase.UpdateEntity:
+                        function = () => { UpdateEntity(response.UpdateEntity.Entity); };
+                        break;
+                    case StreamAction.ActionOneofCase.MoveEntity:
+                        function = () => { MoveEntity(response.MoveEntity); };
+                        break;
+                    case StreamAction.ActionOneofCase.None:
+                    default:
+                        break;
+                }
 
-            if (function != null)
-                _mainthreadQueue.Enqueue(function);
+                if (function != null)
+                    _mainthreadQueue.Enqueue(function);
+            }
         }
 
         public void UpdateObject(NetworkedElement obj)
@@ -185,7 +189,7 @@ namespace Online
 
             if (objectID == "") throw new Exception("Cant update, not registered");
 
-            GRPC.SendRequest(new Request
+            GRPC.SendRequest(new StreamAction
             {
                 UpdateEntity = new UpdateEntity
                 {
@@ -279,7 +283,7 @@ namespace Online
 
         private void PostRegistration(string id, NetworkedElement obj)
         {
-            var req = new Request
+            var req = new StreamAction
             {
                 AddEntity = new AddEntity
                 {
@@ -300,6 +304,7 @@ namespace Online
         {
             while (true)
             {
+                var requests = new RepeatedField<StreamAction>();
                 foreach (var (id, element) in _objects)
                 {
                     if (element.GetControlType() == ElementType.Listener) continue;
@@ -310,16 +315,17 @@ namespace Online
                         _objectLastPos[id] == pos) continue;
                     _objectLastPos[id] = pos;
 
-                    var req = new Request
+                    requests.Add(new StreamAction
                     {
                         MoveEntity = new MoveEntity
                         {
                             Id = id,
                             Position = ToPosition(pos)
                         }
-                    };
-                    GRPC.SendRequest(req); // todo group message sends
+                    });
                 }
+
+                GRPC.SendRequest(new Request { Requests = { requests } });
 
                 yield return new WaitForSeconds(1f / updateFps);
             }
