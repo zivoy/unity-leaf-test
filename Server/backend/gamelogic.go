@@ -1,7 +1,9 @@
 package backend
 
 import (
+	"encoding/hex"
 	pb "exampleMulti/proto"
+	"strings"
 	"sync"
 	"time"
 
@@ -75,10 +77,11 @@ func (g *Game) GetProtoEntities() []*pb.Entity {
 	return entities
 }
 
-func (g *Game) MoveEntity(id uuid.UUID, action *Action, position Coordinate) {
+func (g *Game) MoveEntity(id uuid.UUID, action *Action, position *Coordinate, rotation *Rotation) {
 	g.ActionChannel <- &MoveAction{
 		baseAction: g.getBaseAction(id, action),
 		Position:   position,
+		Rotation:   rotation,
 	}
 }
 
@@ -114,6 +117,7 @@ func (g *Game) UpdateEntity(entity *Entity, action *Action) {
 
 type Event interface {
 	EntityID() uuid.UUID
+	EntityIDBytes() []byte
 	GameID() string
 }
 
@@ -125,6 +129,12 @@ type baseEvent struct {
 func (b baseEvent) EntityID() uuid.UUID {
 	return b.id
 }
+func (b baseEvent) EntityIDBytes() []byte {
+	u := strings.ReplaceAll(b.id.String(), "-", "")
+	id, _ := hex.DecodeString(u)
+	return id
+}
+
 func (b baseEvent) GameID() string {
 	return b.Client().Session.GameId
 }

@@ -3,13 +3,13 @@ package main
 //todo
 // empty sersions get deleted
 // have server ping everyone to find disconnects // keepalive
-// have send ticks
 
 import (
 	"context"
 	"errors"
 	"exampleMulti/backend"
 	pb "exampleMulti/proto"
+	"github.com/google/uuid"
 	"io"
 	"log"
 	"sync"
@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	clientTimeout = 2 * time.Minute
-	maxClients    = 4
+	EmptySessionTimeout = 10 * time.Second // 10 seconds should be plenty of time for someone to join
+	clientTimeout       = 2 * time.Minute
 )
 
 // GameServer is used to stream game information with clients.
@@ -28,7 +28,8 @@ type GameServer struct {
 	pb.UnimplementedGameServer
 	ChangeChannel chan backend.Change
 	games         map[string]*backend.Game
-	sessionUsers  map[string][]backend.Token
+	gameTimeouts  map[string]context.CancelFunc
+	sessionUsers  map[string][]*backend.Client
 	clients       map[backend.Token]*backend.Client
 	mu            sync.RWMutex
 }
@@ -37,9 +38,10 @@ type GameServer struct {
 func NewGameServer() *GameServer {
 	server := &GameServer{
 		games:         make(map[string]*backend.Game),
+		gameTimeouts:  make(map[string]context.CancelFunc),
 		clients:       make(map[backend.Token]*backend.Client),
 		ChangeChannel: make(chan backend.Change, 10),
-		sessionUsers:  make(map[string][]backend.Token),
+		sessionUsers:  make(map[string][]*backend.Client),
 	}
 	server.watchChanges()
 	server.watchTimeout()
@@ -49,14 +51,14 @@ func NewGameServer() *GameServer {
 func (s *GameServer) Stop() {
 	for id := range s.games {
 		log.Printf("Stopping \"%s\"\n", id)
-		s.removeSession(id)
+		s.removeSession(id, true)
 	}
 }
 
 func (s *GameServer) addClient(c *backend.Client) {
 	s.mu.Lock()
 	s.clients[c.Id] = c
-	s.sessionUsers[c.Session.GameId] = append(s.sessionUsers[c.Session.GameId], c.Id)
+	s.sessionUsers[c.Session.GameId] = append(s.sessionUsers[c.Session.GameId], c)
 	s.mu.Unlock()
 }
 
@@ -73,10 +75,10 @@ func (s *GameServer) removeClient(id backend.Token) {
 		s.mu.Unlock()
 		return
 	}
-	serverUsers := make([]backend.Token, len(users)-1, maxClients)
+	serverUsers := make([]*backend.Client, len(users)-1, maxClients)
 	count := 0
 	for _, i := range users {
-		if i == c.Id {
+		if i == c {
 			continue
 		}
 		serverUsers[count] = i
@@ -85,32 +87,51 @@ func (s *GameServer) removeClient(id backend.Token) {
 	s.sessionUsers[session.GameId] = serverUsers
 	s.mu.Unlock()
 	if len(serverUsers) == 0 {
-		s.removeSession(session.GameId)
+		s.removeSession(session.GameId, false)
 	}
 }
 
-func (s *GameServer) makeSession(id string) {
+// makeSession takes a game id and returns true if it created a new session
+func (s *GameServer) makeSession(id string) bool {
 	s.mu.Lock()
 	_, ok := s.games[id]
 	if !ok {
 		s.games[id] = backend.NewGame(s.ChangeChannel, id)
-		s.sessionUsers[id] = make([]backend.Token, 0, maxClients)
+		s.sessionUsers[id] = make([]*backend.Client, 0, maxClients)
 		s.games[id].Start()
 		log.Println("starting new session", id)
 	}
 	s.mu.Unlock()
+	return !ok
 }
 
-func (s *GameServer) removeSession(id string) {
-	session := s.games[id]
-	session.Stop()
-	for _, c := range s.sessionUsers[id] {
-		s.clients[c].Done <- errors.New("session has shut down")
+func (s *GameServer) removeSession(id string, immediate bool) {
+	if !immediate {
+		ctx, cancel := context.WithCancel(context.Background())
+		timer := time.NewTimer(EmptySessionTimeout)
+
+		s.gameTimeouts[id] = cancel
+
+		select {
+		case <-timer.C:
+		case <-ctx.Done():
+			timer.Stop()
+			return
+		}
 	}
+
+	for _, c := range s.sessionUsers[id] {
+		c.Done <- errors.New("session has shut down")
+	}
+
 	s.mu.Lock()
+	session := s.games[id]
+	delete(s.gameTimeouts, id)
 	delete(s.games, id)
 	delete(s.sessionUsers, id)
 	s.mu.Unlock()
+
+	session.Stop()
 	log.Println("closing session", id)
 }
 
@@ -120,8 +141,8 @@ func (s *GameServer) getClientFromContext(ctx context.Context) (*backend.Client,
 	if len(tokenRaw) == 0 {
 		return nil, errors.New("no token provided")
 	}
-	uid, ok := ParseUUID(tokenRaw[0])
-	if !ok {
+	uid, err := uuid.Parse(tokenRaw[0])
+	if err != nil {
 		return nil, errors.New("cannot parse token")
 	}
 	s.mu.RLock()
@@ -146,6 +167,9 @@ func (s *GameServer) Stream(srv pb.Game_StreamServer) error {
 	}
 	currentClient.StreamServer = srv
 	game := currentClient.Session
+	if cancelTimeout, ok := s.gameTimeouts[game.GameId]; ok {
+		cancelTimeout() // don't turn off the session someone is joining
+	}
 
 	defer s.removeClient(currentClient.Id)
 	// Wait for stream requests.
@@ -192,7 +216,7 @@ func (s *GameServer) List(ctx context.Context, req *pb.SessionRequest) (*pb.Sess
 		servers = append(servers, &pb.Server{
 			Id:     u,
 			Online: uint32(len(s.sessionUsers[u])),
-			Max:    maxClients,
+			Max:    uint32(maxClients),
 		})
 	}
 	return &pb.SessionList{
@@ -207,7 +231,9 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	}
 	log.Println("Incoming connection to", req.Session)
 
-	s.makeSession(sessionId) //todo kill unjoined servers
+	if s.makeSession(sessionId) {
+		go s.removeSession(sessionId, false) // remove after timeout if new session
+	}
 	sessionUsers := s.sessionUsers[sessionId]
 	if len(sessionUsers) >= maxClients {
 		return nil, errors.New("the server is full")
@@ -216,12 +242,25 @@ func (s *GameServer) Connect(ctx context.Context, req *pb.ConnectRequest) (*pb.C
 	game := s.games[sessionId]
 	entities := game.GetProtoEntities()
 
-	client := backend.NewClient(game)
+	taken := make([]bool, maxClients)
+	for _, p := range sessionUsers {
+		taken[p.Index] = true
+	}
+	var index int
+	for index = 0; index < maxClients; index++ {
+		if taken[index] {
+			continue
+		}
+		break
+	}
+
+	client := backend.NewClient(game, index)
 	s.addClient(client)
 
 	return &pb.ConnectResponse{
 		Token:    client.Id.String(),
 		Entities: entities,
+		Index:    uint32(index),
 	}, nil
 }
 

@@ -1,18 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
+using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Grpc.Core;
-using UnityEngine;
 using protoBuff;
-using Request = protoBuff.Request;
-using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
+using UnityEngine;
 
 //todo add try catches in places to get errors
-// todo make disconnect / connect dialog work
+// todo make sure that there is a connection / detect disconnect
 namespace Online
 {
     public class NetworkManager : MonoBehaviour
@@ -22,8 +20,8 @@ namespace Online
 
         public int updateFps = 60; // update at 60 fps
 
-        private readonly Dictionary<string, NetworkedElement> _objects;
-        private readonly Dictionary<string, Vector2> _objectLastPos;
+        private readonly Dictionary<ByteString, NetworkedElement> _objects;
+        private readonly Dictionary<ByteString, (Vector3, Quaternion)> _objectLastPos;
 
         private delegate void RunOnMainthread();
 
@@ -32,8 +30,8 @@ namespace Online
         public NetworkManager()
 
         {
-            _objects = new Dictionary<string, NetworkedElement>();
-            _objectLastPos = new Dictionary<string, Vector2>();
+            _objects = new Dictionary<ByteString, NetworkedElement>();
+            _objectLastPos = new Dictionary<ByteString, (Vector3, Quaternion)>();
             _mainthreadQueue = new Queue<RunOnMainthread>();
             GRPC.RegisterMessageCallback(onMessage);
         }
@@ -63,28 +61,35 @@ namespace Online
 
             DontDestroyOnLoad(gameObject);
 
-            Connect();
+            Connect("The Only One");
         }
 
         public void Update()
         {
             while (_mainthreadQueue.Count > 0)
             {
-                _mainthreadQueue.Dequeue()();
+                try
+                {
+                    _mainthreadQueue.Dequeue()();
+                }
+                catch (MissingReferenceException e)
+                {
+                }
             }
         }
 
         /// be careful with this and dont have scripts register on wake since it can lead to recursion 
         public void RegisterObject(NetworkedElement obj)
         {
-            var id = Guid.NewGuid().ToString();
-            _objects.Add(id, obj);
-            PostRegistration(id, obj);
+            var id = Guid.NewGuid().ToByteArray();
+            var uid = ByteString.CopyFrom(id);
+            _objects.Add(uid, obj);
+            PostRegistration(uid, obj);
         }
 
         public void UnregisterObject(NetworkedElement obj)
         {
-            var id = "";
+            var id=ByteString.Empty;
             foreach (var (uid, element) in _objects)
             {
                 if (!element.Equals(obj)) continue;
@@ -95,7 +100,7 @@ namespace Online
             UnregisterObject(id);
         }
 
-        public void UnregisterObject(string id)
+        public void UnregisterObject(ByteString id)
         {
             if (_objects.ContainsKey(id)) return;
             _objects[id].Destroy();
@@ -111,17 +116,17 @@ namespace Online
             GRPC.SendRequest(req);
         }
 
-        public void Connect()
+        public async Task<bool> Connect(string sessionID)
         {
             RepeatedField<Entity> entities;
             try
             {
-                entities = GRPC.Connect("The Only One");
+                entities = await GRPC.Connect(sessionID);
             }
             catch (RpcException e)
             {
                 if (e.StatusCode == StatusCode.Unknown) Debug.LogWarning(e.Status.Detail);
-                return;
+                return false;
             }
 
             Debug.Log(entities);
@@ -138,20 +143,20 @@ namespace Online
             catch (RpcException e)
             {
                 if (e.StatusCode == StatusCode.Unknown) Debug.LogWarning(e.Status.Detail);
-                return;
+                return false;
             }
 
             PostRegistrers();
 
             StartCoroutine(UpdatePosition());
+            return true;
         }
 
-        //todo implement the rest of player connection, make sure that there is a connection / detext disconnect
         private void onMessage(Response action)
         {
-            foreach (var response in action.Responses)
+            foreach (var response in action.Responses) // maybe unwrap events and fire them one by one
             {
-                Debug.Log(action);
+                // Debug.Log(action);
                 RunOnMainthread function = null;
                 switch (response.ActionCase)
                 {
@@ -179,7 +184,7 @@ namespace Online
 
         public void UpdateObject(NetworkedElement obj)
         {
-            var objectID = "";
+            var objectID = ByteString.Empty;
             foreach (var (id, element) in _objects)
             {
                 if (element != obj) continue;
@@ -187,8 +192,9 @@ namespace Online
                 break;
             }
 
-            if (objectID == "") throw new Exception("Cant update, not registered");
+            if (objectID == ByteString.Empty) throw new Exception("Cant update, not registered");
 
+            var pos = obj.GetPosition();
             GRPC.SendRequest(new StreamAction
             {
                 UpdateEntity = new UpdateEntity
@@ -197,14 +203,15 @@ namespace Online
                     {
                         Data = obj.Data(),
                         Id = objectID,
-                        Position = ToPosition(obj.GetPosition()),
+                        Position = Helpers.ToPosition(pos.Item1),
+                        Rotation = Helpers.ToRotation(pos.Item2),
                         Type = obj.ID()
                     }
                 }
             });
         }
 
-        private bool isControlled(string id)
+        private bool isControlled(ByteString id)
         {
             return _objects.ContainsKey(id) && _objects[id].GetControlType() == ElementType.Owner;
         }
@@ -217,7 +224,7 @@ namespace Online
             _objects[entity.Id] = script;
         }
 
-        private void RemoveEntity(string id)
+        private void RemoveEntity(ByteString id)
         {
             if (isControlled(id)) return;
             var obj = _objects[id];
@@ -228,13 +235,15 @@ namespace Online
         private void UpdateEntity(Entity entity)
         {
             if (isControlled(entity.Id)) return;
-            _objects[entity.Id].HandleUpdate(ToVector2(entity.Position), entity.Data);
+            _objects[entity.Id]
+                .HandleUpdate(Helpers.ToVector3(entity.Position), Helpers.ToQuaternion(entity.Rotation), entity.Data);
         }
 
         private void MoveEntity(MoveEntity moveAction)
         {
             if (isControlled(moveAction.Id)) return;
-            _objects[moveAction.Id].HandleUpdate(ToVector2(moveAction.Position), "");
+            _objects[moveAction.Id].HandleUpdate(Helpers.ToVector3(moveAction.Position),
+                Helpers.ToQuaternion(moveAction.Rotation), "");
         }
 
         private void OnDestroy()
@@ -247,29 +256,24 @@ namespace Online
             Disconnect();
         }
 
+        [RuntimeInitializeOnLoadMethod]
+        static void RunOnStart()
+        {
+            Application.quitting += GRPC.Disconnect;
+            Application.wantsToQuit += () =>
+            {
+                GRPC.Disconnect();
+                Connection.Dispose(); //todo make task that starts that will quit the app and a progress bar
+                var state = Connection.GetChannelState();
+                return state == ChannelState.Shutdown || state == ChannelState.TransientFailure;
+            };
+        }
+
         public async void Disconnect()
         {
             StopAllCoroutines();
             await Task.Delay((int)(1000f / updateFps) + 10);
             GRPC.Disconnect();
-        }
-
-        private static Position ToPosition(Vector2 position)
-        {
-            return new Position
-            {
-                X = position.x,
-                Y = position.y
-            };
-        }
-
-        private static Vector2 ToVector2(Position position)
-        {
-            return new Vector2
-            {
-                x = position.X,
-                y = position.Y
-            };
         }
 
         private void PostRegistrers()
@@ -281,8 +285,9 @@ namespace Online
             }
         }
 
-        private void PostRegistration(string id, NetworkedElement obj)
+        private void PostRegistration(ByteString id, NetworkedElement obj)
         {
+            var pos = obj.GetPosition();
             var req = new StreamAction
             {
                 AddEntity = new AddEntity
@@ -293,7 +298,8 @@ namespace Online
                         Id = id,
                         Type = obj.ID(),
                         Data = obj.Data(),
-                        Position = ToPosition(obj.GetPosition())
+                        Position = Helpers.ToPosition(pos.Item1),
+                        Rotation = Helpers.ToRotation(pos.Item2)
                     }
                 }
             };
@@ -310,7 +316,16 @@ namespace Online
                     if (element.GetControlType() == ElementType.Listener) continue;
                     // ideally projectiles should be controlled by the server but i am making them be controlled by the sender for simplicities sake
 
-                    var pos = element.GetPosition();
+                    (Vector3, Quaternion) pos;
+                    try
+                    {
+                        pos = element.GetPosition();
+                    }
+                    catch (MissingReferenceException e)
+                    {
+                        continue; // object was destroyed
+                    }
+
                     if (_objectLastPos.ContainsKey(id) &&
                         _objectLastPos[id] == pos) continue;
                     _objectLastPos[id] = pos;
@@ -320,12 +335,14 @@ namespace Online
                         MoveEntity = new MoveEntity
                         {
                             Id = id,
-                            Position = ToPosition(pos)
+                            Position = Helpers.ToPosition(pos.Item1),
+                            Rotation = Helpers.ToRotation(pos.Item2)
                         }
                     });
                 }
 
-                GRPC.SendRequest(new Request { Requests = { requests } });
+                if (requests.Count > 0)
+                    GRPC.SendRequest(new Request { Requests = { requests } });
 
                 yield return new WaitForSeconds(1f / updateFps);
             }

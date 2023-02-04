@@ -27,25 +27,28 @@ namespace protoBuff {
             "ChBncnBjL211bHRpLnByb3RvIhAKDlNlc3Npb25SZXF1ZXN0IicKC1Nlc3Np",
             "b25MaXN0EhgKB3NlcnZlcnMYASADKAsyBy5TZXJ2ZXIiMQoGU2VydmVyEgoK",
             "AmlkGAEgASgJEg4KBm9ubGluZRgCIAEoDRILCgNtYXgYAyABKA0iIQoOQ29u",
-            "bmVjdFJlcXVlc3QSDwoHc2Vzc2lvbhgBIAEoCSI7Cg9Db25uZWN0UmVzcG9u",
-            "c2USDQoFdG9rZW4YASABKAkSGQoIZW50aXRpZXMYAiADKAsyBy5FbnRpdHki",
-            "KgoHUmVxdWVzdBIfCghyZXF1ZXN0cxgBIAMoCzINLlN0cmVhbUFjdGlvbiIs",
-            "CghSZXNwb25zZRIgCglyZXNwb25zZXMYASADKAsyDS5TdHJlYW1BY3Rpb24i",
-            "qgEKDFN0cmVhbUFjdGlvbhIhCgptb3ZlRW50aXR5GAEgASgLMgsuTW92ZUVu",
-            "dGl0eUgAEh8KCWFkZEVudGl0eRgCIAEoCzIKLkFkZEVudGl0eUgAEiUKDHJl",
-            "bW92ZUVudGl0eRgDIAEoCzINLlJlbW92ZUVudGl0eUgAEiUKDHVwZGF0ZUVu",
-            "dGl0eRgEIAEoCzINLlVwZGF0ZUVudGl0eUgAQggKBmFjdGlvbiIgCghQb3Np",
-            "dGlvbhIJCgF4GAEgASgCEgkKAXkYAiABKAIiTQoGRW50aXR5EgoKAmlkGAEg",
-            "ASgJEhsKCHBvc2l0aW9uGAIgASgLMgkuUG9zaXRpb24SDAoEdHlwZRgDIAEo",
-            "CRIMCgREYXRhGAQgASgJIlgKCUFkZEVudGl0eRIXCgZlbnRpdHkYASABKAsy",
-            "By5FbnRpdHkSHQoQa2VlcE9uRGlzY29ubmVjdBgCIAEoCEgAiAEBQhMKEV9r",
-            "ZWVwT25EaXNjb25uZWN0IicKDFVwZGF0ZUVudGl0eRIXCgZlbnRpdHkYASAB",
-            "KAsyBy5FbnRpdHkiGgoMUmVtb3ZlRW50aXR5EgoKAmlkGAEgASgJIjUKCk1v",
-            "dmVFbnRpdHkSCgoCaWQYASABKAkSGwoIcG9zaXRpb24YAiABKAsyCS5Qb3Np",
-            "dGlvbjKEAQoER2FtZRInCgRMaXN0Eg8uU2Vzc2lvblJlcXVlc3QaDC5TZXNz",
-            "aW9uTGlzdCIAEi4KB0Nvbm5lY3QSDy5Db25uZWN0UmVxdWVzdBoQLkNvbm5l",
-            "Y3RSZXNwb25zZSIAEiMKBlN0cmVhbRIILlJlcXVlc3QaCS5SZXNwb25zZSIA",
-            "KAEwAUIUWgZwcm90by+qAglwcm90b0J1ZmZiBnByb3RvMw=="));
+            "bmVjdFJlcXVlc3QSDwoHc2Vzc2lvbhgBIAEoCSJKCg9Db25uZWN0UmVzcG9u",
+            "c2USDQoFdG9rZW4YASABKAkSDQoFaW5kZXgYAiABKA0SGQoIZW50aXRpZXMY",
+            "AyADKAsyBy5FbnRpdHkiKgoHUmVxdWVzdBIfCghyZXF1ZXN0cxgBIAMoCzIN",
+            "LlN0cmVhbUFjdGlvbiIsCghSZXNwb25zZRIgCglyZXNwb25zZXMYASADKAsy",
+            "DS5TdHJlYW1BY3Rpb24iqgEKDFN0cmVhbUFjdGlvbhIhCgptb3ZlRW50aXR5",
+            "GAEgASgLMgsuTW92ZUVudGl0eUgAEh8KCWFkZEVudGl0eRgCIAEoCzIKLkFk",
+            "ZEVudGl0eUgAEiUKDHJlbW92ZUVudGl0eRgDIAEoCzINLlJlbW92ZUVudGl0",
+            "eUgAEiUKDHVwZGF0ZUVudGl0eRgEIAEoCzINLlVwZGF0ZUVudGl0eUgAQggK",
+            "BmFjdGlvbiIrCghQb3NpdGlvbhIJCgF4GAEgASgCEgkKAXkYAiABKAISCQoB",
+            "ehgDIAEoAiI2CghSb3RhdGlvbhIJCgF3GAEgASgCEgkKAXgYAiABKAISCQoB",
+            "eRgDIAEoAhIJCgF6GAQgASgCImoKBkVudGl0eRIKCgJpZBgBIAEoDBIbCghw",
+            "b3NpdGlvbhgCIAEoCzIJLlBvc2l0aW9uEhsKCHJvdGF0aW9uGAMgASgLMgku",
+            "Um90YXRpb24SDAoEdHlwZRgEIAEoCRIMCgREYXRhGAUgASgJIlgKCUFkZEVu",
+            "dGl0eRIXCgZlbnRpdHkYASABKAsyBy5FbnRpdHkSHQoQa2VlcE9uRGlzY29u",
+            "bmVjdBgCIAEoCEgAiAEBQhMKEV9rZWVwT25EaXNjb25uZWN0IicKDFVwZGF0",
+            "ZUVudGl0eRIXCgZlbnRpdHkYASABKAsyBy5FbnRpdHkiGgoMUmVtb3ZlRW50",
+            "aXR5EgoKAmlkGAEgASgMIlIKCk1vdmVFbnRpdHkSCgoCaWQYASABKAwSGwoI",
+            "cG9zaXRpb24YAiABKAsyCS5Qb3NpdGlvbhIbCghyb3RhdGlvbhgDIAEoCzIJ",
+            "LlJvdGF0aW9uMoQBCgRHYW1lEicKBExpc3QSDy5TZXNzaW9uUmVxdWVzdBoM",
+            "LlNlc3Npb25MaXN0IgASLgoHQ29ubmVjdBIPLkNvbm5lY3RSZXF1ZXN0GhAu",
+            "Q29ubmVjdFJlc3BvbnNlIgASIwoGU3RyZWFtEgguUmVxdWVzdBoJLlJlc3Bv",
+            "bnNlIgAoATABQhRaBnByb3RvL6oCCXByb3RvQnVmZmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -53,16 +56,17 @@ namespace protoBuff {
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.SessionList), global::protoBuff.SessionList.Parser, new[]{ "Servers" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Server), global::protoBuff.Server.Parser, new[]{ "Id", "Online", "Max" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.ConnectRequest), global::protoBuff.ConnectRequest.Parser, new[]{ "Session" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.ConnectResponse), global::protoBuff.ConnectResponse.Parser, new[]{ "Token", "Entities" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.ConnectResponse), global::protoBuff.ConnectResponse.Parser, new[]{ "Token", "Index", "Entities" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Request), global::protoBuff.Request.Parser, new[]{ "Requests" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Response), global::protoBuff.Response.Parser, new[]{ "Responses" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.StreamAction), global::protoBuff.StreamAction.Parser, new[]{ "MoveEntity", "AddEntity", "RemoveEntity", "UpdateEntity" }, new[]{ "Action" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Position), global::protoBuff.Position.Parser, new[]{ "X", "Y" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Entity), global::protoBuff.Entity.Parser, new[]{ "Id", "Position", "Type", "Data" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Position), global::protoBuff.Position.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Rotation), global::protoBuff.Rotation.Parser, new[]{ "W", "X", "Y", "Z" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.Entity), global::protoBuff.Entity.Parser, new[]{ "Id", "Position", "Rotation", "Type", "Data" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.AddEntity), global::protoBuff.AddEntity.Parser, new[]{ "Entity", "KeepOnDisconnect" }, new[]{ "KeepOnDisconnect" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.UpdateEntity), global::protoBuff.UpdateEntity.Parser, new[]{ "Entity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.RemoveEntity), global::protoBuff.RemoveEntity.Parser, new[]{ "Id" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.MoveEntity), global::protoBuff.MoveEntity.Parser, new[]{ "Id", "Position" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::protoBuff.MoveEntity), global::protoBuff.MoveEntity.Parser, new[]{ "Id", "Position", "Rotation" }, null, null, null, null)
           }));
     }
     #endregion
@@ -886,6 +890,7 @@ namespace protoBuff {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public ConnectResponse(ConnectResponse other) : this() {
       token_ = other.token_;
+      index_ = other.index_;
       entities_ = other.entities_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -908,10 +913,22 @@ namespace protoBuff {
       }
     }
 
+    /// <summary>Field number for the "index" field.</summary>
+    public const int IndexFieldNumber = 2;
+    private uint index_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Index {
+      get { return index_; }
+      set {
+        index_ = value;
+      }
+    }
+
     /// <summary>Field number for the "entities" field.</summary>
-    public const int EntitiesFieldNumber = 2;
+    public const int EntitiesFieldNumber = 3;
     private static readonly pb::FieldCodec<global::protoBuff.Entity> _repeated_entities_codec
-        = pb::FieldCodec.ForMessage(18, global::protoBuff.Entity.Parser);
+        = pb::FieldCodec.ForMessage(26, global::protoBuff.Entity.Parser);
     private readonly pbc::RepeatedField<global::protoBuff.Entity> entities_ = new pbc::RepeatedField<global::protoBuff.Entity>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -935,6 +952,7 @@ namespace protoBuff {
         return true;
       }
       if (Token != other.Token) return false;
+      if (Index != other.Index) return false;
       if(!entities_.Equals(other.entities_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -944,6 +962,7 @@ namespace protoBuff {
     public override int GetHashCode() {
       int hash = 1;
       if (Token.Length != 0) hash ^= Token.GetHashCode();
+      if (Index != 0) hash ^= Index.GetHashCode();
       hash ^= entities_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -967,6 +986,10 @@ namespace protoBuff {
         output.WriteRawTag(10);
         output.WriteString(Token);
       }
+      if (Index != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(Index);
+      }
       entities_.WriteTo(output, _repeated_entities_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -982,6 +1005,10 @@ namespace protoBuff {
         output.WriteRawTag(10);
         output.WriteString(Token);
       }
+      if (Index != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(Index);
+      }
       entities_.WriteTo(ref output, _repeated_entities_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -995,6 +1022,9 @@ namespace protoBuff {
       int size = 0;
       if (Token.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Token);
+      }
+      if (Index != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Index);
       }
       size += entities_.CalculateSize(_repeated_entities_codec);
       if (_unknownFields != null) {
@@ -1011,6 +1041,9 @@ namespace protoBuff {
       }
       if (other.Token.Length != 0) {
         Token = other.Token;
+      }
+      if (other.Index != 0) {
+        Index = other.Index;
       }
       entities_.Add(other.entities_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -1032,7 +1065,11 @@ namespace protoBuff {
             Token = input.ReadString();
             break;
           }
-          case 18: {
+          case 16: {
+            Index = input.ReadUInt32();
+            break;
+          }
+          case 26: {
             entities_.AddEntriesFrom(input, _repeated_entities_codec);
             break;
           }
@@ -1055,7 +1092,11 @@ namespace protoBuff {
             Token = input.ReadString();
             break;
           }
-          case 18: {
+          case 16: {
+            Index = input.ReadUInt32();
+            break;
+          }
+          case 26: {
             entities_.AddEntriesFrom(ref input, _repeated_entities_codec);
             break;
           }
@@ -1849,6 +1890,7 @@ namespace protoBuff {
     public Position(Position other) : this() {
       x_ = other.x_;
       y_ = other.y_;
+      z_ = other.z_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1882,6 +1924,18 @@ namespace protoBuff {
       }
     }
 
+    /// <summary>Field number for the "z" field.</summary>
+    public const int ZFieldNumber = 3;
+    private float z_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Z {
+      get { return z_; }
+      set {
+        z_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1899,6 +1953,7 @@ namespace protoBuff {
       }
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X, other.X)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y, other.Y)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Z, other.Z)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1908,6 +1963,7 @@ namespace protoBuff {
       int hash = 1;
       if (X != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X);
       if (Y != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y);
+      if (Z != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Z);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1934,6 +1990,10 @@ namespace protoBuff {
         output.WriteRawTag(21);
         output.WriteFloat(Y);
       }
+      if (Z != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Z);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1952,6 +2012,10 @@ namespace protoBuff {
         output.WriteRawTag(21);
         output.WriteFloat(Y);
       }
+      if (Z != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Z);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1966,6 +2030,9 @@ namespace protoBuff {
         size += 1 + 4;
       }
       if (Y != 0F) {
+        size += 1 + 4;
+      }
+      if (Z != 0F) {
         size += 1 + 4;
       }
       if (_unknownFields != null) {
@@ -1985,6 +2052,9 @@ namespace protoBuff {
       }
       if (other.Y != 0F) {
         Y = other.Y;
+      }
+      if (other.Z != 0F) {
+        Z = other.Z;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2007,6 +2077,10 @@ namespace protoBuff {
           }
           case 21: {
             Y = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Z = input.ReadFloat();
             break;
           }
         }
@@ -2032,6 +2106,310 @@ namespace protoBuff {
             Y = input.ReadFloat();
             break;
           }
+          case 29: {
+            Z = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class Rotation : pb::IMessage<Rotation>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<Rotation> _parser = new pb::MessageParser<Rotation>(() => new Rotation());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<Rotation> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public Rotation() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public Rotation(Rotation other) : this() {
+      w_ = other.w_;
+      x_ = other.x_;
+      y_ = other.y_;
+      z_ = other.z_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public Rotation Clone() {
+      return new Rotation(this);
+    }
+
+    /// <summary>Field number for the "w" field.</summary>
+    public const int WFieldNumber = 1;
+    private float w_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float W {
+      get { return w_; }
+      set {
+        w_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "x" field.</summary>
+    public const int XFieldNumber = 2;
+    private float x_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float X {
+      get { return x_; }
+      set {
+        x_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "y" field.</summary>
+    public const int YFieldNumber = 3;
+    private float y_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Y {
+      get { return y_; }
+      set {
+        y_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "z" field.</summary>
+    public const int ZFieldNumber = 4;
+    private float z_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Z {
+      get { return z_; }
+      set {
+        z_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as Rotation);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(Rotation other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(W, other.W)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X, other.X)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y, other.Y)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Z, other.Z)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (W != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(W);
+      if (X != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X);
+      if (Y != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y);
+      if (Z != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Z);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (W != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(W);
+      }
+      if (X != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(X);
+      }
+      if (Y != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Y);
+      }
+      if (Z != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Z);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (W != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(W);
+      }
+      if (X != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(X);
+      }
+      if (Y != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Y);
+      }
+      if (Z != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(Z);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (W != 0F) {
+        size += 1 + 4;
+      }
+      if (X != 0F) {
+        size += 1 + 4;
+      }
+      if (Y != 0F) {
+        size += 1 + 4;
+      }
+      if (Z != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(Rotation other) {
+      if (other == null) {
+        return;
+      }
+      if (other.W != 0F) {
+        W = other.W;
+      }
+      if (other.X != 0F) {
+        X = other.X;
+      }
+      if (other.Y != 0F) {
+        Y = other.Y;
+      }
+      if (other.Z != 0F) {
+        Z = other.Z;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            W = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            X = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Y = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            Z = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 13: {
+            W = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            X = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Y = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            Z = input.ReadFloat();
+            break;
+          }
         }
       }
     }
@@ -2053,7 +2431,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[9]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2075,6 +2453,7 @@ namespace protoBuff {
     public Entity(Entity other) : this() {
       id_ = other.id_;
       position_ = other.position_ != null ? other.position_.Clone() : null;
+      rotation_ = other.rotation_ != null ? other.rotation_.Clone() : null;
       type_ = other.type_;
       data_ = other.data_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -2088,10 +2467,10 @@ namespace protoBuff {
 
     /// <summary>Field number for the "id" field.</summary>
     public const int IdFieldNumber = 1;
-    private string id_ = "";
+    private pb::ByteString id_ = pb::ByteString.Empty;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Id {
+    public pb::ByteString Id {
       get { return id_; }
       set {
         id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
@@ -2110,8 +2489,20 @@ namespace protoBuff {
       }
     }
 
+    /// <summary>Field number for the "rotation" field.</summary>
+    public const int RotationFieldNumber = 3;
+    private global::protoBuff.Rotation rotation_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::protoBuff.Rotation Rotation {
+      get { return rotation_; }
+      set {
+        rotation_ = value;
+      }
+    }
+
     /// <summary>Field number for the "type" field.</summary>
-    public const int TypeFieldNumber = 3;
+    public const int TypeFieldNumber = 4;
     private string type_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2123,7 +2514,7 @@ namespace protoBuff {
     }
 
     /// <summary>Field number for the "Data" field.</summary>
-    public const int DataFieldNumber = 4;
+    public const int DataFieldNumber = 5;
     private string data_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2151,6 +2542,7 @@ namespace protoBuff {
       }
       if (Id != other.Id) return false;
       if (!object.Equals(Position, other.Position)) return false;
+      if (!object.Equals(Rotation, other.Rotation)) return false;
       if (Type != other.Type) return false;
       if (Data != other.Data) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -2162,6 +2554,7 @@ namespace protoBuff {
       int hash = 1;
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (position_ != null) hash ^= Position.GetHashCode();
+      if (rotation_ != null) hash ^= Rotation.GetHashCode();
       if (Type.Length != 0) hash ^= Type.GetHashCode();
       if (Data.Length != 0) hash ^= Data.GetHashCode();
       if (_unknownFields != null) {
@@ -2184,18 +2577,22 @@ namespace protoBuff {
     #else
       if (Id.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteBytes(Id);
       }
       if (position_ != null) {
         output.WriteRawTag(18);
         output.WriteMessage(Position);
       }
-      if (Type.Length != 0) {
+      if (rotation_ != null) {
         output.WriteRawTag(26);
+        output.WriteMessage(Rotation);
+      }
+      if (Type.Length != 0) {
+        output.WriteRawTag(34);
         output.WriteString(Type);
       }
       if (Data.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(42);
         output.WriteString(Data);
       }
       if (_unknownFields != null) {
@@ -2210,18 +2607,22 @@ namespace protoBuff {
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (Id.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteBytes(Id);
       }
       if (position_ != null) {
         output.WriteRawTag(18);
         output.WriteMessage(Position);
       }
-      if (Type.Length != 0) {
+      if (rotation_ != null) {
         output.WriteRawTag(26);
+        output.WriteMessage(Rotation);
+      }
+      if (Type.Length != 0) {
+        output.WriteRawTag(34);
         output.WriteString(Type);
       }
       if (Data.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(42);
         output.WriteString(Data);
       }
       if (_unknownFields != null) {
@@ -2235,10 +2636,13 @@ namespace protoBuff {
     public int CalculateSize() {
       int size = 0;
       if (Id.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Id);
       }
       if (position_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
+      }
+      if (rotation_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Rotation);
       }
       if (Type.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Type);
@@ -2267,6 +2671,12 @@ namespace protoBuff {
         }
         Position.MergeFrom(other.Position);
       }
+      if (other.rotation_ != null) {
+        if (rotation_ == null) {
+          Rotation = new global::protoBuff.Rotation();
+        }
+        Rotation.MergeFrom(other.Rotation);
+      }
       if (other.Type.Length != 0) {
         Type = other.Type;
       }
@@ -2289,7 +2699,7 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Id = input.ReadString();
+            Id = input.ReadBytes();
             break;
           }
           case 18: {
@@ -2300,10 +2710,17 @@ namespace protoBuff {
             break;
           }
           case 26: {
-            Type = input.ReadString();
+            if (rotation_ == null) {
+              Rotation = new global::protoBuff.Rotation();
+            }
+            input.ReadMessage(Rotation);
             break;
           }
           case 34: {
+            Type = input.ReadString();
+            break;
+          }
+          case 42: {
             Data = input.ReadString();
             break;
           }
@@ -2323,7 +2740,7 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Id = input.ReadString();
+            Id = input.ReadBytes();
             break;
           }
           case 18: {
@@ -2334,10 +2751,17 @@ namespace protoBuff {
             break;
           }
           case 26: {
-            Type = input.ReadString();
+            if (rotation_ == null) {
+              Rotation = new global::protoBuff.Rotation();
+            }
+            input.ReadMessage(Rotation);
             break;
           }
           case 34: {
+            Type = input.ReadString();
+            break;
+          }
+          case 42: {
             Data = input.ReadString();
             break;
           }
@@ -2363,7 +2787,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[10]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2612,7 +3036,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[11]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2810,7 +3234,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[12]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[13]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2842,10 +3266,10 @@ namespace protoBuff {
 
     /// <summary>Field number for the "id" field.</summary>
     public const int IdFieldNumber = 1;
-    private string id_ = "";
+    private pb::ByteString id_ = pb::ByteString.Empty;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Id {
+    public pb::ByteString Id {
       get { return id_; }
       set {
         id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
@@ -2896,7 +3320,7 @@ namespace protoBuff {
     #else
       if (Id.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteBytes(Id);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -2910,7 +3334,7 @@ namespace protoBuff {
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (Id.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteBytes(Id);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -2923,7 +3347,7 @@ namespace protoBuff {
     public int CalculateSize() {
       int size = 0;
       if (Id.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Id);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2956,7 +3380,7 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Id = input.ReadString();
+            Id = input.ReadBytes();
             break;
           }
         }
@@ -2975,7 +3399,7 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Id = input.ReadString();
+            Id = input.ReadBytes();
             break;
           }
         }
@@ -2999,7 +3423,7 @@ namespace protoBuff {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[13]; }
+      get { return global::protoBuff.MultiReflection.Descriptor.MessageTypes[14]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3021,6 +3445,7 @@ namespace protoBuff {
     public MoveEntity(MoveEntity other) : this() {
       id_ = other.id_;
       position_ = other.position_ != null ? other.position_.Clone() : null;
+      rotation_ = other.rotation_ != null ? other.rotation_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3032,10 +3457,10 @@ namespace protoBuff {
 
     /// <summary>Field number for the "id" field.</summary>
     public const int IdFieldNumber = 1;
-    private string id_ = "";
+    private pb::ByteString id_ = pb::ByteString.Empty;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Id {
+    public pb::ByteString Id {
       get { return id_; }
       set {
         id_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
@@ -3051,6 +3476,18 @@ namespace protoBuff {
       get { return position_; }
       set {
         position_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "rotation" field.</summary>
+    public const int RotationFieldNumber = 3;
+    private global::protoBuff.Rotation rotation_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::protoBuff.Rotation Rotation {
+      get { return rotation_; }
+      set {
+        rotation_ = value;
       }
     }
 
@@ -3071,6 +3508,7 @@ namespace protoBuff {
       }
       if (Id != other.Id) return false;
       if (!object.Equals(Position, other.Position)) return false;
+      if (!object.Equals(Rotation, other.Rotation)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3080,6 +3518,7 @@ namespace protoBuff {
       int hash = 1;
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (position_ != null) hash ^= Position.GetHashCode();
+      if (rotation_ != null) hash ^= Rotation.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3100,11 +3539,15 @@ namespace protoBuff {
     #else
       if (Id.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteBytes(Id);
       }
       if (position_ != null) {
         output.WriteRawTag(18);
         output.WriteMessage(Position);
+      }
+      if (rotation_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Rotation);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -3118,11 +3561,15 @@ namespace protoBuff {
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
       if (Id.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteString(Id);
+        output.WriteBytes(Id);
       }
       if (position_ != null) {
         output.WriteRawTag(18);
         output.WriteMessage(Position);
+      }
+      if (rotation_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Rotation);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -3135,10 +3582,13 @@ namespace protoBuff {
     public int CalculateSize() {
       int size = 0;
       if (Id.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Id);
       }
       if (position_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
+      }
+      if (rotation_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Rotation);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3161,6 +3611,12 @@ namespace protoBuff {
         }
         Position.MergeFrom(other.Position);
       }
+      if (other.rotation_ != null) {
+        if (rotation_ == null) {
+          Rotation = new global::protoBuff.Rotation();
+        }
+        Rotation.MergeFrom(other.Rotation);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -3177,7 +3633,7 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Id = input.ReadString();
+            Id = input.ReadBytes();
             break;
           }
           case 18: {
@@ -3185,6 +3641,13 @@ namespace protoBuff {
               Position = new global::protoBuff.Position();
             }
             input.ReadMessage(Position);
+            break;
+          }
+          case 26: {
+            if (rotation_ == null) {
+              Rotation = new global::protoBuff.Rotation();
+            }
+            input.ReadMessage(Rotation);
             break;
           }
         }
@@ -3203,7 +3666,7 @@ namespace protoBuff {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Id = input.ReadString();
+            Id = input.ReadBytes();
             break;
           }
           case 18: {
@@ -3211,6 +3674,13 @@ namespace protoBuff {
               Position = new global::protoBuff.Position();
             }
             input.ReadMessage(Position);
+            break;
+          }
+          case 26: {
+            if (rotation_ == null) {
+              Rotation = new global::protoBuff.Rotation();
+            }
+            input.ReadMessage(Rotation);
             break;
           }
         }

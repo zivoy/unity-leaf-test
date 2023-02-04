@@ -1,7 +1,5 @@
-using Google.Protobuf;
-using UnityEngine;
 using Online;
-using protoBuff;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour, NetworkedElement
 {
@@ -46,10 +44,11 @@ public class PlayerController : MonoBehaviour, NetworkedElement
         _rigidbody.MovePosition(pos);
     }
 
-    public Vector2 GetPosition()
+    public (Vector3,Quaternion) GetPosition()
     {
-        var pos = transform.position;
-        return new Vector2 { x = pos.x, y = pos.z };
+        var pos = transform.position + Vector3.zero;
+        pos.y = 0;
+        return (pos, transform.rotation);
     }
 
     public void Destroy()
@@ -57,13 +56,9 @@ public class PlayerController : MonoBehaviour, NetworkedElement
         Destroy(gameObject);
     }
 
-    public void HandleUpdate(Vector2 position, string data)
+    public void HandleUpdate(Vector3 position,Quaternion rotation, string data)
     {
-        setPosition(new Vector3
-        {
-            x = position.x,
-            z = position.y,
-        });
+        setPosition(position);
 
         if (data == "") return;
         _meshRenderer.material.color = getColour(data);
